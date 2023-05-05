@@ -1,0 +1,50 @@
+{% extends "base.html" %} {% block meta %}
+<title>Kembangin | Login</title>
+{% endblock meta %} {% block content %}
+<div class="text-center font-bold flex h-screen" id="content">
+  <form
+    method="POST"
+    action=""
+    id="login-form"
+    class="grid grid-cols-1 gap-5 bg-red-200 rounded border-4 border-neutral-500 p-5 m-auto"
+  >
+    {% csrf_token %}
+    <div>
+      <p class="text-3xl">LOGIN</p>
+      <p class="text-3xl">BABADU - D-3</p>
+    </div>
+    <div>
+      <input
+        type="text"
+        name="username"
+        placeholder="Username"
+        class="form-control rounded border-2 border-black-500 hover:border-neutral-900 text-center"
+      />
+    </div>
+    <div>
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        class="form-control rounded border-2 border-black-500 hover:border-neutral-900 text-center"
+      />
+    </div>
+    <div>
+      <button
+        class="text-lg bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded border-2 border-neutral-500"
+        type="submit"
+      >
+        Login
+      </button>
+    </div>
+    {% if messages %}
+    <ul class="text-center font-bold text-black-400">
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </form>
+</div>
+
+{% endblock content %}

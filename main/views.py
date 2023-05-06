@@ -11,3 +11,7 @@ def show_register(request):
 
 def show_login(request):
     return render(request, 'login.html', {})
+
+
+def show_pertandingan(request):
+    return render(request, 'pertandingan.html', {})

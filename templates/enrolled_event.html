@@ -1,0 +1,41 @@
+{% extends "base.html" %} {% block meta %}
+<title>Badminton | Enrolled Event</title>
+{% endblock meta %} {% block content %}
+
+<h1 class="my-10 text-center font-bold text-4xl">Enrolled Event</h1>
+
+<div class="text-center flex flex-wrap m-10 justify-center" id="content">
+
+  {% if enrolled_events %}
+    {% for event in enrolled_events %} 
+      <div
+        class="max-w-sm max-h-max grid grid-cols-1 mr-5 bg-red-200 rounded border-4 border-neutral-500 p-5 m-1"
+      >
+        <div>
+          <div>
+            <p class="text-3xl font-bold">{{ event.nama_event }}</p>
+            <p class="text-xl">Superseries {{ event.superseries }}</p>
+            <p class="">{{ event.spesialisasi }}</p>
+          </div>
+          
+          <div class="text-left mt-5">
+            <p class="">📅 {{ event.tanggal_mulai }} - {{ event.tanggal_selesai }}</p>
+            <p class="">💰 Rp {{ event.hadiah }} </p>
+            <p class="">📍 {{ event.stadium }}</p>
+            <p class="">👨‍👩‍👧‍👦 Kapasitas {{ event.kapasitas }} orang</p>
+          </div>
+          
+          <div
+          class="mt-5 bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center"
+        >
+          <a href=""> Unenrolled </a>
+        </div>
+        </div>
+      </div>
+      
+    {% endfor %}
+  {% endif %}
+
+</div>
+
+{% endblock content %}

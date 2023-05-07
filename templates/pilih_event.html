@@ -1,0 +1,63 @@
+{% extends "base.html" %} {% block meta %}
+<title>Badminton | Daftar Event</title>
+{% endblock meta %} {% block content %}
+
+
+<div class="text-center font-bold flex flex-col" id="content">
+
+  <h1 class="my-10 font-bold text-4xl">Daftar Event</h1>
+  <div class="relative overflow-x-auto mx-24">
+    <table class="w-full text-sm text-left ">
+        <thead class="text-xs bg-red-400 text-white">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Nama Event
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Total Hadiah
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Tanggal Mulai
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Kategori
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Kapasitas
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+          {% if events %}
+            {% for event in events %}
+            <tr class="bg-red-200 border-b">
+                <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                  {{ event.nama_event }} 
+                </th>
+                <td class="px-6 py-4 font-medium">
+                    Rp {{ event.hadiah }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                    {{ event.tanggal_mulai }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                    {{ event.superseries }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                    {{event.terisi}}/{{ event.kapasitas }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                    <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                        <a href="{% url 'atlet:show_pilih_kategori' stadium='State Arena' event='All England Open'%}">Pilih</a>
+                    </div>
+              </td>
+            </tr>
+            {% endfor %}
+          {% endif %}
+        </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock content %}

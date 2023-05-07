@@ -11,10 +11,16 @@
         <thead class="text-xs bg-red-400 text-white">
             <tr>
                 <th scope="col" class="px-6 py-3">
-                    Nama Stadium
+                    Nama Event
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Negara
+                    Total Hadiah
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Tanggal Mulai
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Kategori
                 </th>
                 <th scope="col" class="px-6 py-3">
                     Kapasitas
@@ -23,22 +29,28 @@
             </tr>
         </thead>
         <tbody>
-          {% if stadiums %}
-            {% for stadium in stadiums %}
+          {% if events %}
+            {% for event in events %}
             <tr class="bg-red-200 border-b">
                 <th scope="row" class="px-6 py-4 whitespace-nowrap">
-                  {{ stadium.nama }} 
+                  {{ event.nama_event }} 
                 </th>
                 <td class="px-6 py-4 font-medium">
-                    {{ stadium.negara }}
+                    Rp {{ event.hadiah }}
                 </td>
                 <td class="px-6 py-4 font-medium">
-                    {{ stadium.kapasitas }}
+                    {{ event.tanggal_mulai }}
                 </td>
                 <td class="px-6 py-4 font-medium">
-                  <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
-                    <a href="{% url 'atlet:show_pilih_event' stadium='State Arena' %}">Pilih</a>
-                  </div>
+                    {{ event.superseries }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                    {{event.terisi}}/{{ event.kapasitas }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                    <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                        <a href="{% url 'atlet:show_pilih_kategori' stadium='State Arena' event='All England Open'%}">Pilih</a>
+                    </div>
               </td>
             </tr>
             {% endfor %}

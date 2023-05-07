@@ -1,0 +1,189 @@
+{% extends "base.html" %} {% block meta %}
+<title>Badminton | Daftar Event</title>
+{% endblock meta %} {% block content %}
+
+
+<div class="flex flex-col" id="content">
+
+  <h1 class="text-center my-10 font-bold text-4xl">Pilih Kategori</h1>
+  <div class="relative overflow-x-auto mx-24">
+    {% if event %}
+    <table>
+        <thead>
+            <tr>
+                <th scope="col" class=""></th>
+                <th scope="col" class=""></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Event</td>
+                <td>: {{ event.nama_event }}</td>
+            </tr>
+            <tr>
+                <td>Hadiah</td>
+                <td>: Rp {{ event.hadiah }}</td>
+            </tr>
+            <tr>
+                <td>Tanggal Mulai</td>
+                <td>: {{ event.tanggal_mulai }}</td>
+            </tr>
+            <tr>
+                <td>Tanggal Selesai</td>
+                <td>: {{ event.tanggal_selesai }}</td>
+            </tr>
+            <tr>
+                <td>Kategori</td>
+                <td>: {{ event.superseries }}</td>
+            </tr>
+            <tr>
+                <td>Kapasitas</td>
+                <td>: {{ event.kapasitas }}</td>
+            </tr>
+            <tr>
+                <td>Stadium</td>
+                <td>: {{ event.stadium }}</td>
+            </tr>
+            <tr>
+                <td>Negara</td>
+                <td>: {{ event.negara }}</td>
+            </tr>
+        </tbody>
+    </table>
+    {% endif%}
+   
+
+    <table class="w-full text-sm text-left mt-4">
+        <thead class="text-xs bg-red-400 text-center text-white">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Kategori
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Partner
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if sex == "woman" %}
+                
+                <tr class="bg-red-200 border-b">
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                        Tunggal Putri
+                    </th>
+                    <td class="px-6 py-4 text-center font-medium">
+                        -
+                    </td>
+                    <td class="px-6 py-4 font-medium">
+                        <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                            <a href="{% url 'atlet:show_enrolled_event' %}">Pilih</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="bg-red-200 border-b">
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                        Ganda Putri
+                    </th>
+                    <td class="px-6 py-4 font-medium">
+                        <select 
+                            class="form-control rounded border-2  hover:border-neutral-900 text-center">
+                                <option value="" disabled selected hidden>Pilih partner</option>
+                            {% if women %}
+                                {% for woman in women %}
+                                    <option value="{{ woman }}">{{ woman }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </td>
+                    <td class="px-6 py-4 font-medium">
+                        <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                            <a href="{% url 'atlet:show_enrolled_event' %}">Pilih</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="bg-red-200 border-b">
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                        Ganda Campuran
+                    </th>
+                    <td class="px-6 py-4 font-medium">
+                        <select 
+                            class="form-control rounded border-2  hover:border-neutral-900 text-center">
+                                <option value="" disabled selected hidden>Pilih partner</option>
+                            {% if men %}
+                                {% for man in men %}
+                                    <option value="{{ man }}">{{ man }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </td>
+                    <td class="px-6 py-4 font-medium">
+                        <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                            <a href="{% url 'atlet:show_enrolled_event' %}">Pilih</a>
+                        </div>
+                    </td>
+                </tr>
+                
+            {% elif sex == "man" %}
+                <tr class="bg-red-200 border-b">
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                        Tunggal Putra
+                    </th>
+                    <td class="text-center px-6 py-4 font-medium">
+                        -
+                    </td>
+                    <td class="px-6 py-4 font-medium">
+                        <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                            <a href="{% url 'atlet:show_enrolled_event' %}">Pilih</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="bg-red-200 border-b">
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                        Ganda Putra
+                    </th>
+                    <td class="px-6 py-4 font-medium">
+                        <select 
+                            class="form-control rounded border-2  hover:border-neutral-900 text-center">
+                                <option value="" disabled selected hidden>Pilih partner</option>
+                            {% if men %}
+                                {% for man in men %}
+                                    <option value="{{ man }}">{{ man }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </td>
+                    <td class="px-6 py-4 font-medium">
+                        <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                            <a href="{% url 'atlet:show_enrolled_event' %}">Pilih</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="bg-red-200 border-b">
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                        Ganda Campuran
+                    </th>
+                    <td class="px-6 py-4 font-medium">
+                        <select 
+                            class="form-control rounded border-2 border-black-500 hover:border-neutral-900 text-center">
+                                <option value="" disabled selected hidden>Pilih partner</option>
+                            {% if women %}
+                                {% for woman in women %}
+                                    <option value="{{ woman }}">{{ woman }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                    </td>
+                    <td class="px-6 py-4 font-medium">
+                        <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                            <a href="{% url 'atlet:show_enrolled_event' %}">Pilih</a>
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock content %}

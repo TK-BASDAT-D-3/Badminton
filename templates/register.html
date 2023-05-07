@@ -45,3 +45,74 @@
   </div>
 </body>
 </html>
+=======
+{% extends "base.html" %} {% block meta %}
+<title>Badminton | Register</title>
+{% endblock meta %} {% block content %}
+<div class="text-center font-bold h-screen flex" id="content">
+  <form
+    method="POST"
+    action=""
+    id="register-form"
+    class="grid grid-cols-1 gap-5 bg-red-200 rounded border-4 border-neutral-500 p-5 m-auto"
+  >
+    {% csrf_token %}
+    <div>
+      <p class="text-3xl">Register Account</p>
+      <p class="text-xl">BABADU - D-3</p>
+    </div>
+    <div>
+      <input
+        type="text"
+        name="username"
+        placeholder="Username"
+        class="form-control rounded border-2 border-black-500 hover:border-neutral-900 text-center"
+        required
+      />
+    </div>
+    <div>
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        class="form-control rounded border-2 border-black-500 hover:border-neutral-900 text-center"
+        required
+      />
+    </div>
+    <div>
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        class="form-control rounded border-2 border-black-500 hover:border-neutral-900 text-center"
+        required
+      />
+    </div>
+    <div>
+      <input
+        type="password"
+        name="repeat_password"
+        placeholder="Repeat password"
+        class="form-control rounded border-2 border-black-500 hover:border-neutral-900 text-center"
+        required
+      />
+    </div>
+    <div>
+      <button
+        class="text-lg bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded border-2 border-neutral-500"
+        type="submit"
+      >
+        Register
+      </button>
+    </div>
+    {% comment %} Validasi, jika email atau password salah, tampilkan pesan
+    error. {% endcomment %} {% if messages %}
+    <ul class="text-center font-bold text-black-400">
+      {% for message in messages %}
+      <li>{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </form>
+</div>
+{% endblock content %}

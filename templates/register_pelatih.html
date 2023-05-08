@@ -1,81 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Form Registrasi Pelatih</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    }
-    h1 {
-      text-align: center;
-    }
-    label {
-      display: block;
-      margin-bottom: 10px;
-    }
-    input[type="text"],
-    input[type="email"],
-    input[type="date"] {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
-    }
-    input[type="checkbox"] {
-      margin-right: 10px;
-    }
-    input[type="submit"] {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      background-color: #4CAF50;
-      color: #fff;
-      text-align: center;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: background-color 0.3s;
-    }
-    input[type="submit"]:hover {
-      background-color: #3e8e41;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Form Registrasi Pelatih</h1>
-    <form action="" method="post">
-      <label for="nama">Nama:</label>
-      <input type="text" id="nama" name="nama" required>
+{% extends "base.html" %}
 
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required>
+{% block meta %}
+<title>Badminton | Register Pelatih</title>
+{% endblock meta %}
 
-      <label for="negara">Negara:</label>
-      <input type="text" id="negara" name="negara" required>
+{% block content %}
+<div class="container">
+  <h1 class="text-center font-bold text-4xl my-10">Form Registrasi Pelatih</h1>
+  <div class="flex justify-center">
+    <div class="grid grid-cols-1 gap-5 bg-white rounded-lg shadow-md p-5 m-auto">
+      <form action="" methox="post" class="flex flex-col justify-center">
+        <label for="nama" class="block font-bold mb-2">Nama:</label>
+        <input type="text" id="nama" name="nama" required
+          class="w-full py-2 px-4 mb-5 border border-gray-300 rounded-lg">
 
-      <label for="kategori">Kategori:</label>
-      <label for="tunggal_putra"><input type="checkbox" id="tunggal_putra" name="kategori[]" value="Tunggal Putra">Tunggal Putra</label>
-      <label for="tunggal_putri"><input type="checkbox" id="tunggal_putri" name="kategori[]" value="Tunggal Putri">Tunggal Putri</label>
-      <label for="ganda_putra"><input type="checkbox" id="ganda_putra" name="kategori[]" value="Ganda Putra">Ganda Putra</label>
-      <label for="ganda_putri"><input type="checkbox" id="ganda_putri" name="kategori[]" value="Ganda Putri">Ganda Putri</label>
-      <label for="ganda_campuran"><input type="checkbox" id="ganda_campuran" name="kategori[]" value="Ganda Campuran">Ganda Campuran</label>
+        <label for="email" class="block font-bold mb-2">Email:</label>
+        <input type="email" id="email" name="email" required
+          class="w-full py-2 px-4 mb-5 border border-gray-300 rounded-lg">
 
-      <label for="tanggal_mulai">Tanggal Mulai:</label>
-      <input type="date" id="tanggal_mulai" name="tanggal_mulai" required>
+        <label for="negara" class="block font-bold mb-2">Negara:</label>
+        <input type="text" id="negara" name="negara" required
+          class="w-full py-2 px-4 mb-5 border border-gray-300 rounded-lg">
 
-      <input type="submit" value="Daftar">
-    </form>
+        <h2 class="text-center font-bold text-lg mb-5">Kategori:</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <label for="tunggal_putra" class="block mb-2">
+            <input type="checkbox" id="tunggal_putra" name="kategori[]" value="Tunggal Putra" class="mr-2">
+            Tunggal Putra
+          </label>
+          <label for="tunggal_putri" class="block mb-2">
+            <input type="checkbox" id="tunggal_putri" name="kategori[]" value="Tunggal Putri" class="mr-2">
+            Tunggal Putri
+          </label>
+          <label for="ganda_putra" class="block mb-2">
+            <input type="checkbox" id="ganda_putra" name="kategori[]" value="Ganda Putra" class="mr-2">
+            Ganda Putra
+          </label>
+          <label for="ganda_putri" class="block mb-2">
+            <input type="checkbox" id="ganda_putri" name="kategori[]" value="Ganda Putri" class="mr-2">
+            Ganda Putri
+          </label>
+          <label for="ganda_campuran" class="block mb-2">
+            <input type="checkbox" id="ganda_campuran" name="kategori[]" value="Ganda Campuran" class="mr-2">
+            Ganda Campuran
+          </label>
+        </div>
+
+        <label for="tanggal_mulai" class="block font-bold mb-2">Tanggal Mulai:</label>
+        <input type="date" id="tanggal_mulai" name="tanggal_mulai" required
+          class="w-full py-2 px-4 mb-5 border border-gray-300 rounded-lg">
+
+        <input type="submit" value="Daftar"
+          class="bg-red-400 text-white rounded-lg py-2 px-4 cursor-pointer transition duration-300 hover:bg-red-500">
+      </form>
+    </div>
   </div>
-</body>
+</div {% endblock content %}

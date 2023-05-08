@@ -1,90 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
+{% extends "base.html" %}
+
+{% block meta %}
   <title>Form Registrasi Atlet</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    }
-    h1 {
-      text-align: center;
-    }
-    label {
-      display: block;
-      margin-bottom: 10px;
-    }
-    input[type="text"],
-    input[type="email"],
-    input[type="date"],
-    input[type="number"] {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
-    }
-    input[type="radio"] {
-      margin-right: 10px;
-    }
-    input[type="submit"] {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      background-color: #4CAF50;
-      color: #fff;
-      text-align: center;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: background-color 0.3s;
-    }
-    input[type="submit"]:hover {
-      background-color: #3e8e41;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Form Registrasi Atlet</h1>
-    <form action="" method="post">
-      <label for="nama">Nama:</label>
-      <input type="text" id="nama" name="nama" required>
+{% endblock meta %}
 
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required>
+{% block content %}
+<div class="container">
+  <h1 class="text-center my-10 font-bold text-4xl">Form Registrasi Atlet</h1>
+  <form action="" method="post" class="grid grid-cols-1 gap-5 bg-red-200 rounded border-4 border-neutral-500 p-5 m-auto">
+    <div class="mb-5">
+      <label for="nama" class="block mb-2 font-bold">Nama:</label>
+      <input type="text" id="nama" name="nama" required class="w-full p-2 border-2 border-neutral-500 rounded-lg">
+    </div>
 
-      <label for="negara">Negara:</label>
-      <input type="text" id="negara" name="negara" required>
+    <div class="mb-5">
+      <label for="email" class="block mb-2 font-bold">Email:</label>
+      <input type="email" id="email" name="email" required class="w-full p-2 border-2 border-neutral-500 rounded-lg">
+    </div>
 
-      <label for="tanggal_lahir">Tanggal Lahir:</label>
-      <input type="date" id="tanggal_lahir" name="tanggal_lahir" required>
+    <div class="mb-5">
+      <label for="negara" class="block mb-2 font-bold">Negara:</label>
+      <input type="text" id="negara" name="negara" required class="w-full p-2 border-2 border-neutral-500 rounded-lg">
+    </div>
 
-      <label for="play">Play:</label>
-      <label for="left"><input type="radio" id="left" name="play" value="left" required>Left</label>
-      <label for="right"><input type="radio" id="right" name="play" value="right">Right</label>
+    <div class="mb-5">
+      <label for="tanggal_lahir" class="block mb-2 font-bold">Tanggal Lahir:</label>
+      <input type="date" id="tanggal_lahir" name="tanggal_lahir" required class="w-full p-2 border-2 border-neutral-500 rounded-lg">
+    </div>
 
-      <label for="tinggi_badan">Tinggi Badan:</label>
-      <input type="number" id="tinggi_badan" name="tinggi_badan" required>
+    <div class="mb-5">
+      <label class="block mb-2 font-bold">Play:</label>
+      <div class="flex items-center">
+        <label for="left" class="mr-2">
+          <input type="radio" id="left" name="play" value="left" required>
+          Left
+        </label>
+        <label for="right">
+          <input type="radio" id="right" name="play" value="right">
+          Right
+        </label>
+      </div>
+    </div>
 
-      <label for="jenis_kelamin">Jenis Kelamin:</label>
-      <select id="jenis_kelamin" name="jenis_kelamin" required>
+    <div class="mb-5">
+      <label for="tinggi_badan" class="block mb-2 font-bold">Tinggi Badan:</label>
+      <input type="number" id="tinggi_badan" name="tinggi_badan" required class="w-full p-2 border-2 border-neutral-500 rounded-lg">
+    </div>
+
+    <div class="mb-5">
+      <label for="jenis_kelamin" class="block mb-2 font-bold">Jenis Kelamin:</label>
+      <select id="jenis_kelamin" name="jenis_kelamin" required class="w-full p-2 border-2 border-neutral-500 rounded-lg">
         <option value="">Pilih jenis kelamin</option>
         <option value="Laki-laki">Laki-laki</option>
         <option value="Perempuan">Perempuan</option>
       </select>
+    </div>
 
-      <input type="submit" value="Daftar">
-    </form>
-  </div>
-</body>
-</html>
+    <input type="submit" value="Daftar" class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+  </form>
+</div>
+{% endblock content %}

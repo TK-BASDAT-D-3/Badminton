@@ -1,0 +1,54 @@
+# Ignore Django project settings
+*.env
+*.env.*
+settings*.py
+
+# Ignore development server
+*.sqlite3
+*.pyc
+
+# Ignore static and media files (assumes you're using collectstatic)
+/staticfiles/
+/media/
+
+# Ignore database migrations
+**/migrations/
+**/__pycache__/
+
+
+# Ignore local development settings
+/local_settings.py
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+*.sublime*
+*.swp
+
+# Ignore logs and temporary files
+/log/
+/tmp/
+*.log
+*.tmp
+
+# Ignore secret keys and sensitive information
+*.key
+*.pem
+*.p12
+
+# Ignore package and dependency files
+/.venv/
+/.env/
+/node_modules/
+/yarn-error.log
+/.cache/
+
+# Ignore compiled Python files
+*.pyc
+*/__pycache__/
+
+# Ignore other project-specific files and directories
+*.bak
+*.backup
+*.sql
+*.ini

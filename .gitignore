@@ -1,7 +1,6 @@
 # Ignore Django project settings
 *.env
 *.env.*
-settings*.py
 
 # Ignore development server
 *.sqlite3
@@ -37,7 +36,7 @@ settings*.py
 *.p12
 
 # Ignore package and dependency files
-/.venv/
+/venv/
 /.env/
 /node_modules/
 /yarn-error.log

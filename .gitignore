@@ -50,3 +50,4 @@
 *.bak
 *.backup
 *.ini
+.DS_Store

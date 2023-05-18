@@ -1,15 +1,29 @@
 from django.http import JsonResponse
-from .db_functions import get_all_event_data
+from .db_functions import get_all_event_data, get_event_data
+from django.shortcuts import render
 
 def event_data_view(request):
     data = get_all_event_data()
-    return JsonResponse({'event_data': data})
+    context = {'event_data': data}
+    return render(request, 'pertandingan.html', context)
+
+def show_pilih_event(request):
+    # tarik event yang diadakan di stadium
+    # data = umpire_db.get_all_event_data()
+    # context = {'events': data}
+    data = get_all_event_data()
+    context = {'events': data}
+    print(context)
+    return render(request, 'pilih_event_umpire.html', context)
 
 from .db_functions import get_partai_kompetisi_in_event
 
 def partai_kompetisi_view(request, event_name):
-    data = get_partai_kompetisi_in_event(event_name)
-    return JsonResponse({'partai_kompetisi_data': data})
+    event_data = get_event_data(event_name)
+    context = {
+        'event': event_data
+    }
+    return render(request, 'pilih_kategori_umpire.html', context)
 
 
 from django.views.decorators.csrf import csrf_exempt
@@ -110,3 +124,46 @@ def update_point_history_view(request):
     add_or_update_point_history(peserta_id, babak, kategori, minggu_ke, bulan, tahun)
 
     return JsonResponse({'success': True})
+
+from.db_functions import insert_game_data, insert_peserta_mengikuti_game_data, insert_new_match_in_event, insert_peserta_mengikuti_match
+
+@csrf_exempt
+def insert_match_and_game_data(request):
+    if request.method == 'POST':
+        match_data = (
+            request.POST.get('Jenis_Babak'),
+            request.POST.get('Tanggal'),
+            request.POST.get('Waktu_Mulai'),
+            int(request.POST.get('Total_Durasi')),
+            request.POST.get('Nama_Event'),
+            int(request.POST.get('Tahun_Event')),
+            request.POST.get('ID_Umpire')
+        )
+
+        game_data_count = int(request.POST.get('game_data_count'))
+        game_data = []
+        for i in range(game_data_count):
+            game_data.append((
+                int(request.POST.get(f'game_{i}_No_Game')),
+                int(request.POST.get(f'game_{i}_Durasi')),
+                request.POST.get(f'game_{i}_Jenis_Babak'),
+                request.POST.get(f'game_{i}_Tanggal'),
+                request.POST.get(f'game_{i}_Waktu_Mulai')
+            ))
+
+        peserta_game_data_count = int(request.POST.get('peserta_game_data_count'))
+        peserta_game_data = []
+        for i in range(peserta_game_data_count):
+            peserta_game_data.append((
+                int(request.POST.get(f'peserta_game_{i}_Nomor_Peserta')),
+                int(request.POST.get(f'peserta_game_{i}_No_Game')),
+                int(request.POST.get(f'peserta_game_{i}_Skor'))
+            ))
+
+        insert_new_match_in_event(match_data)
+        insert_game_data(game_data)
+        insert_peserta_mengikuti_game_data(peserta_game_data)
+
+        return JsonResponse({'status': 'success'})
+
+    return JsonResponse({'status': 'invalid_method'})

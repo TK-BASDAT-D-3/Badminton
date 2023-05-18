@@ -10,6 +10,15 @@ def get_all_event_data():
         rows = cursor.fetchall()
     return rows
 
+def get_event_data(event_name):
+    with connection.cursor() as cursor:
+        # Set the desired search path
+        search_path = 'badudu'
+        cursor.execute(f"SET search_path TO {search_path}")
+        cursor.execute("SELECT * FROM EVENT WHERE Nama_Event = %s", [event_name])
+        rows = cursor.fetchone()
+    return rows
+
 def get_partai_kompetisi_in_event(event_name):
     with connection.cursor() as cursor:
             # Set the desired search path
@@ -89,3 +98,32 @@ def insert_new_match_in_event(jenis_babak, tanggal, waktu_mulai, total_durasi, n
         VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
         cursor.execute(query, [jenis_babak, tanggal, waktu_mulai, total_durasi, nama_event, tahun_event, id_umpire])
+
+def insert_game_data(game_data):
+    with connection.cursor() as cursor:
+        search_path = 'badudu'
+        cursor.execute(f"SET search_path TO {search_path}")
+        cursor.executemany("""
+            INSERT INTO GAME (No_Game, Durasi, Jenis_Babak, Tanggal, Waktu_Mulai)
+            VALUES (%s, %s, %s, %s, %s)
+        """, game_data)
+
+def insert_peserta_mengikuti_game_data(peserta_game_data):
+    with connection.cursor() as cursor:
+        search_path = 'badudu'
+        cursor.execute(f"SET search_path TO {search_path}")
+        cursor.executemany("""
+            INSERT INTO PESERTA_MENGIKUTI_GAME (Nomor_Peserta, No_Game, Skor)
+            VALUES (%s, %s, %s)
+        """, peserta_game_data)
+
+
+def insert_peserta_mengikuti_match(jenis_babak, tanggal, waktu_mulai, nomor_peserta, status_menang):
+    with connection.cursor() as cursor:
+        search_path = 'badudu'
+        cursor.execute(f"SET search_path TO {search_path}")
+        sql = """
+        INSERT INTO PESERTA_MENGIKUTI_MATCH (Jenis_Babak, Tanggal, Waktu_Mulai, Nomor_Peserta, Status_Menang)
+        VALUES (%s, %s, %s, %s, %s)
+        """
+        cursor.execute(sql, (jenis_babak, tanggal, waktu_mulai, nomor_peserta, status_menang))

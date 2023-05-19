@@ -66,13 +66,13 @@ def peserta_kompetisi_data_view(request, event_name):
 
 from django.core.cache import cache
 import random
+from datetime import datetime, timedelta
 
 def match_data_view(request, event_name, babak):
     data = get_peserta_kompetisi_data(event_name)
     peserta_kompetisi = data['peserta_kompetisi']
-    atlet_ganda_data = data['atlet_ganda_data']
-    atlet_kualifikasi_data = data['atlet_kualifikasi_data']
     map_id_to_nama = data['map_id_to_nama']
+    event_data = get_event_data(event_name)
     # Define the number of pairs needed based on the "babak" argument
     pairs_needed = {
         'R32': 16,
@@ -89,7 +89,7 @@ def match_data_view(request, event_name, babak):
         return JsonResponse({'error': 'Not enough peserta for the specified babak'}, status=400)
     
     random_pairs = [random.sample(peserta_kompetisi, 2) for _ in range(pairs_needed[babak])]
-    context = {'match_data': random_pairs, 'atlet_ganda_data': atlet_ganda_data, 'atlet_kualifikasi_data': atlet_kualifikasi_data, "map_id_to_nama": map_id_to_nama}
+    context = {'match_data': random_pairs, "map_id_to_nama": map_id_to_nama, "event_data": event_data, "babak": babak, "starting_time": (datetime.now() + timedelta(hours=7)).strftime("%H:%M:%S"), "tanggal": (datetime.now() + timedelta(hours=7)).strftime("%Y-%m-%d")}
     print(context)
     return render(request, 'pertandingan_umpire.html', context)
 

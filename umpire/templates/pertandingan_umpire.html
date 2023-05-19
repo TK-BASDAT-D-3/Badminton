@@ -1,4 +1,7 @@
-{% extends "base.html" %} {% block meta %}
+{% extends "base.html" %}
+{% load tz %}
+ 
+{% block meta %}
 <title>Badminton | Pertandingan</title>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -166,6 +169,41 @@
 
             // Send the data to the server
             sendData(convertDurationToMinutes(stopwatchValue), data);
+        });
+
+        document.getElementById('nextButton').addEventListener('click', function () {
+            const stopwatchElement = document.getElementById('stopwatch');
+            const stopwatchValue = stopwatchElement.textContent;
+            var data = {
+                jenis_babak: "{{ babak }}",
+                tanggal: "{{ tanggal }}",
+                waktu_mulai: '{{ starting_time }}',
+                total_durasi: Math.floor(convertDurationToMinutes(stopwatchValue) / 60),
+                nama_event: "{{ event_data.0 }}",
+                tahun_event: "{{ event_data.1 }}",
+                id_umpire: "190b1182-5174-4780-bd19-ce81b402e4dd"
+            };
+
+            var formBody = [];
+            for (var property in data) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(data[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
+            }
+            formBody = formBody.join("&");
+
+            fetch("{% url 'umpire:insert_match' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+                body: formBody
+            })
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
         });
     });
 </script>

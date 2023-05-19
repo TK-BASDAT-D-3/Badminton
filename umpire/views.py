@@ -5,7 +5,7 @@ from django.shortcuts import render
 def event_data_view(request):
     data = get_all_event_data()
     context = {'event_data': data}
-    return render(request, 'pertandingan.html', context)
+    return render(request, 'pertandingan_umpire.html', context)
 
 def show_pilih_event(request):
     # tarik event yang diadakan di stadium
@@ -99,9 +99,9 @@ def match_data_view(request, event_name, babak):
         return JsonResponse({'error': 'Not enough peserta for the specified babak'}, status=400)
     
     random_pairs = [random.sample(peserta_kompetisi, 2) for _ in range(pairs_needed[babak])]
-    winners = [random.choice(pair) for pair in random_pairs]
+    # winners = [random.choice(pair) for pair in random_pairs]
     # cache.set(f'{event_name}_{babak}_winners', winners, None)
-    return JsonResponse({'match_data': random_pairs, 'winners': winners, 'atlet_ganda_data': atlet_ganda_data, 'atlet_kualifikasi_data': atlet_kualifikasi_data})
+    return JsonResponse({'match_data': random_pairs, 'atlet_ganda_data': atlet_ganda_data, 'atlet_kualifikasi_data': atlet_kualifikasi_data})
 
 
 from django.http import JsonResponse

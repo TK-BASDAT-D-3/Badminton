@@ -1,11 +1,6 @@
 from django.http import JsonResponse
-from .db_functions import get_all_event_data, get_event_data
+from .db_functions import get_all_event_data, get_event_data, get_peserta_kompetisi_data
 from django.shortcuts import render
-
-def event_data_view(request):
-    data = get_all_event_data()
-    context = {'event_data': data}
-    return render(request, 'pertandingan_umpire.html', context)
 
 def show_pilih_event(request):
     # tarik event yang diadakan di stadium
@@ -13,7 +8,6 @@ def show_pilih_event(request):
     # context = {'events': data}
     data = get_all_event_data()
     context = {'events': data}
-    print(context)
     return render(request, 'pilih_event_umpire.html', context)
 
 from .db_functions import get_partai_kompetisi_in_event
@@ -78,6 +72,7 @@ def match_data_view(request, event_name, babak):
     peserta_kompetisi = data['peserta_kompetisi']
     atlet_ganda_data = data['atlet_ganda_data']
     atlet_kualifikasi_data = data['atlet_kualifikasi_data']
+    map_id_to_nama = data['map_id_to_nama']
     # Define the number of pairs needed based on the "babak" argument
     pairs_needed = {
         'R32': 16,
@@ -90,18 +85,13 @@ def match_data_view(request, event_name, babak):
     if babak not in pairs_needed:
         return JsonResponse({'error': 'Invalid babak parameter'}, status=400)
     
-    # previous_babak = list(pairs_needed.keys())[list(pairs_needed.values()).index(pairs_needed[babak]) - 1]
-
-    # if cache.get(f'{event_name}_{previous_babak}_winners'):
-    #     peserta_kompetisi = cache.get(f'{event_name}_{previous_babak}_winners')
-
     if len(peserta_kompetisi) < pairs_needed[babak] * 2:
         return JsonResponse({'error': 'Not enough peserta for the specified babak'}, status=400)
     
     random_pairs = [random.sample(peserta_kompetisi, 2) for _ in range(pairs_needed[babak])]
-    # winners = [random.choice(pair) for pair in random_pairs]
-    # cache.set(f'{event_name}_{babak}_winners', winners, None)
-    return JsonResponse({'match_data': random_pairs, 'atlet_ganda_data': atlet_ganda_data, 'atlet_kualifikasi_data': atlet_kualifikasi_data})
+    context = {'match_data': random_pairs, 'atlet_ganda_data': atlet_ganda_data, 'atlet_kualifikasi_data': atlet_kualifikasi_data, "map_id_to_nama": map_id_to_nama}
+    print(context)
+    return render(request, 'pertandingan_umpire.html', context)
 
 
 from django.http import JsonResponse
@@ -125,45 +115,57 @@ def update_point_history_view(request):
 
     return JsonResponse({'success': True})
 
-from.db_functions import insert_game_data, insert_peserta_mengikuti_game_data, insert_new_match_in_event, insert_peserta_mengikuti_match
+from .db_functions import insert_into_game
+@csrf_exempt
+@require_POST
+def insert_game_data(request):
+        data = {
+            "No_Game": request.POST.get('No_Game'),
+            "Durasi": request.POST.get('Durasi'),
+            "Jenis_Babak": request.POST.get('Jenis_Babak'),
+            "Tanggal": request.POST.get('Tanggal'),
+            "Waktu_Mulai": request.POST.get('Waktu_Mulai')
+        }
+
+        try:
+            insert_into_game(**data)
+            return JsonResponse({"status": "success"}, status=200)
+        except Exception as e:
+            return JsonResponse({"status": "fail", "error": str(e)}, status=400)
+
+from .db_functions import insert_into_peserta_mengikuti_game, insert_into_peserta_mengikuti_match
 
 @csrf_exempt
-def insert_match_and_game_data(request):
-    if request.method == 'POST':
-        match_data = (
-            request.POST.get('Jenis_Babak'),
-            request.POST.get('Tanggal'),
-            request.POST.get('Waktu_Mulai'),
-            int(request.POST.get('Total_Durasi')),
-            request.POST.get('Nama_Event'),
-            int(request.POST.get('Tahun_Event')),
-            request.POST.get('ID_Umpire')
-        )
+@require_POST
+def insert_peserta_mengikuti_game_view(request):
+    data = {
+        "Nomor_Peserta": request.POST.get('Nomor_Peserta'),
+        "No_Game": request.POST.get('No_Game'),
+        "Skor": request.POST.get('Skor')
+    }
 
-        game_data_count = int(request.POST.get('game_data_count'))
-        game_data = []
-        for i in range(game_data_count):
-            game_data.append((
-                int(request.POST.get(f'game_{i}_No_Game')),
-                int(request.POST.get(f'game_{i}_Durasi')),
-                request.POST.get(f'game_{i}_Jenis_Babak'),
-                request.POST.get(f'game_{i}_Tanggal'),
-                request.POST.get(f'game_{i}_Waktu_Mulai')
-            ))
+    try:
+        insert_into_peserta_mengikuti_game(**data)
+        return JsonResponse({"status": "success"}, status=200)
+    except Exception as e:
+        return JsonResponse({"status": "fail", "error": str(e)}, status=400)
+    
+@csrf_exempt
+@require_POST
+def insert_peserta_mengikuti_match_view(request):
+    data = {
+            "Jenis_Babak": request.POST.get('Jenis_Babak'),
+            "Tanggal": request.POST.get('Tanggal'),
+            "Waktu_Mulai": request.POST.get('Waktu_Mulai'),
+            "Nomor_Peserta": request.POST.get('Nomor_Peserta'),
+            "Status_Menang": request.POST.get('Status_Menang'),
+        }
 
-        peserta_game_data_count = int(request.POST.get('peserta_game_data_count'))
-        peserta_game_data = []
-        for i in range(peserta_game_data_count):
-            peserta_game_data.append((
-                int(request.POST.get(f'peserta_game_{i}_Nomor_Peserta')),
-                int(request.POST.get(f'peserta_game_{i}_No_Game')),
-                int(request.POST.get(f'peserta_game_{i}_Skor'))
-            ))
+    try:
+        insert_into_peserta_mengikuti_match(**data)
+        return JsonResponse({"status": "success"}, status=200)
+    except Exception as e:
+        return JsonResponse({"status": "fail", "error": str(e)}, status=400)
+    
 
-        insert_new_match_in_event(match_data)
-        insert_game_data(game_data)
-        insert_peserta_mengikuti_game_data(peserta_game_data)
 
-        return JsonResponse({'status': 'success'})
-
-    return JsonResponse({'status': 'invalid_method'})

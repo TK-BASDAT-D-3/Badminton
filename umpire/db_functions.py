@@ -38,30 +38,7 @@ def update_durasi_in_match(jenis_babak, tanggal, waktu_mulai, new_durasi):
             WHERE Jenis_Babak = %s AND Tanggal = %s AND Waktu_Mulai = %s
         """, [new_durasi, jenis_babak, tanggal, waktu_mulai])
 
-def get_peserta_kompetisi_data(event_name):
-    with connection.cursor() as cursor:
-            # Set the desired search path
-        search_path = 'badudu'
-        cursor.execute(f"SET search_path TO {search_path}")
-        cursor.execute("""
-            SELECT * FROM peserta_mendaftar_event
-            WHERE nama_event = %s
-        """, [event_name])
-        peserta_kompetisi = cursor.fetchall()
-        
-        atlet_ganda_data = []
-        atlet_kualifikasi_data = []
-        for peserta in peserta_kompetisi:
-            if peserta[1] == 'Atlet Ganda':
-                atlet_ganda_data.append(peserta)
-            elif peserta[1] == 'Atlet Kualifikasi':
-                atlet_kualifikasi_data.append(peserta)
-    
-    return {
-        'peserta_kompetisi': peserta_kompetisi,
-        'atlet_ganda_data': atlet_ganda_data,
-        'atlet_kualifikasi_data': atlet_kualifikasi_data,
-    }
+
 
 def add_or_update_point_history(peserta_id, babak, kategori, minggu_ke, bulan, tahun):
     point_map = {
@@ -99,23 +76,29 @@ def insert_new_match_in_event(jenis_babak, tanggal, waktu_mulai, total_durasi, n
         """
         cursor.execute(query, [jenis_babak, tanggal, waktu_mulai, total_durasi, nama_event, tahun_event, id_umpire])
 
-def insert_game_data(game_data):
+def insert_into_game(No_Game, Durasi, Jenis_Babak, Tanggal, Waktu_Mulai):
     with connection.cursor() as cursor:
         search_path = 'badudu'
         cursor.execute(f"SET search_path TO {search_path}")
-        cursor.executemany("""
+        cursor.execute(
+            """
             INSERT INTO GAME (No_Game, Durasi, Jenis_Babak, Tanggal, Waktu_Mulai)
             VALUES (%s, %s, %s, %s, %s)
-        """, game_data)
+            """,
+            [No_Game, Durasi, Jenis_Babak, Tanggal, Waktu_Mulai]
+        )
 
-def insert_peserta_mengikuti_game_data(peserta_game_data):
+def insert_into_peserta_mengikuti_game(Nomor_Peserta, No_Game, Skor):
     with connection.cursor() as cursor:
         search_path = 'badudu'
         cursor.execute(f"SET search_path TO {search_path}")
-        cursor.executemany("""
+        cursor.execute(
+            """
             INSERT INTO PESERTA_MENGIKUTI_GAME (Nomor_Peserta, No_Game, Skor)
             VALUES (%s, %s, %s)
-        """, peserta_game_data)
+            """,
+            [Nomor_Peserta, No_Game, Skor]
+        )
 
 
 def insert_peserta_mengikuti_match(jenis_babak, tanggal, waktu_mulai, nomor_peserta, status_menang):
@@ -127,3 +110,74 @@ def insert_peserta_mengikuti_match(jenis_babak, tanggal, waktu_mulai, nomor_pese
         VALUES (%s, %s, %s, %s, %s)
         """
         cursor.execute(sql, (jenis_babak, tanggal, waktu_mulai, nomor_peserta, status_menang))
+
+
+def insert_into_peserta_mengikuti_match(Jenis_Babak, Tanggal, Waktu_Mulai, Nomor_Peserta, Status_Menang):
+    with connection.cursor() as cursor:
+        search_path = 'badudu'
+        cursor.execute(f"SET search_path TO {search_path}")
+        cursor.execute(
+            """
+            INSERT INTO PESERTA_MENGIKUTI_MATCH (Jenis_Babak, Tanggal, Waktu_Mulai, Nomor_Peserta, Status_Menang)
+            VALUES (%s, %s, %s, %s, %s)
+            """,
+            [Jenis_Babak, Tanggal, Waktu_Mulai, Nomor_Peserta, Status_Menang]
+        )
+
+def get_nama_from_id_atlet(id_atlet):
+    with connection.cursor() as cursor:
+        search_path = 'badudu'
+        cursor.execute(f"SET search_path TO {search_path}")
+        cursor.execute(
+            """
+            SELECT nama FROM MEMBER WHERE id = %s
+            """,
+            [id_atlet]
+        )
+        return cursor.fetchone()[0]
+    
+def get_atlet_ganda(id_atlet_ganda):
+    with connection.cursor() as cursor:
+        search_path = 'badudu'
+        cursor.execute(f"SET search_path TO {search_path}")
+        cursor.execute(
+            """
+            select * from atlet_ganda where id_atlet_ganda= %s
+            """,
+            [id_atlet_ganda]
+        )
+        return cursor.fetchone()
+    
+def get_peserta_kompetisi_data(event_name):
+    with connection.cursor() as cursor:
+            # Set the desired search path
+        search_path = 'badudu'
+        cursor.execute(f"SET search_path TO {search_path}")
+        cursor.execute("""
+            SELECT * FROM BADUDU.PESERTA_KOMPETISI WHERE nomor_peserta in
+                (SELECT nomor_peserta FROM badudu.peserta_mendaftar_event
+                WHERE nama_event = %s)
+        """, [event_name])
+        peserta_kompetisi = cursor.fetchall()
+        print(peserta_kompetisi)
+        atlet_ganda_data = []
+        atlet_kualifikasi_data = []
+        map_id_to_nama = {}
+        for index, peserta in enumerate(peserta_kompetisi):
+            if peserta[1]:
+                data_atlet_ganda = get_atlet_ganda(peserta[1])
+                data_atlet_1 = get_nama_from_id_atlet(data_atlet_ganda[1])
+                data_atlet_2 = get_nama_from_id_atlet(data_atlet_ganda[2])
+                peserta_kompetisi[index] = peserta + (data_atlet_1 + ' & ' + data_atlet_2, )
+                atlet_ganda_data.append(peserta_kompetisi[index])
+            elif peserta[2]:
+                peserta_kompetisi[index] = peserta + (get_nama_from_id_atlet(peserta[2]), )
+                atlet_kualifikasi_data.append(peserta_kompetisi[index])
+
+    
+    return {
+        'peserta_kompetisi': peserta_kompetisi,
+        'atlet_ganda_data': atlet_ganda_data,
+        'atlet_kualifikasi_data': atlet_kualifikasi_data,
+        'map_id_to_nama': map_id_to_nama
+    }

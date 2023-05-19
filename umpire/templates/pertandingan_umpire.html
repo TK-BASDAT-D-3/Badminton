@@ -17,7 +17,7 @@
                 minutes = minutes.toString().padStart(2, '0');
                 seconds = seconds.toString().padStart(2, '0');
 
-                var stopwatchText = '[' +minutes + ':' + seconds + ']';
+                var stopwatchText = '[' + minutes + ':' + seconds + ']';
                 document.getElementById('stopwatch').textContent = stopwatchText;
 
                 timer = setTimeout(updateStopwatch, 1000); // Update every 10 milliseconds
@@ -32,6 +32,46 @@
         // Stop the stopwatch when the user leaves the page
         window.addEventListener('beforeunload', function () {
             clearTimeout(timer);
+        });
+
+        // Get all the buttons with class "decrement"
+        const decrementButtons = document.querySelectorAll(".minus-button");
+
+        // Add event listener to each decrement button
+        decrementButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                // Get the corresponding value element
+                const valueElement = button.parentNode.childNodes[2];
+
+                // Get the current value
+                let value = parseInt(valueElement.textContent);
+
+                // Update the value
+                value--;
+
+                // Update the value element with the new value
+                valueElement.textContent = value;
+            });
+        });
+
+        // Get all the buttons with class "increment"
+        const incrementButtons = document.querySelectorAll(".plus-button");
+
+        // Add event listener to each increment button
+        incrementButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                // Get the corresponding value element
+                const valueElement = button.parentNode.childNodes[2];
+
+                // Get the current value
+                let value = parseInt(valueElement.textContent);
+
+                // Update the value
+                value++;
+
+                // Update the value element with the new value
+                valueElement.textContent = value;
+            });
         });
     });
 </script>
@@ -65,9 +105,6 @@
                                     class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
                                     Skor Tim 2
                                 </th>
-                                <th scope="col" class="p-4">
-                                    <span class="sr-only">Edit</span>
-                                </th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
@@ -82,11 +119,11 @@
                                 </td>
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    [–] 1 [+]
+                                    <button class="minus-button">[-]</button> 1 <button class="plus-button">[+]</button>
                                 </td>
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    [–] 0 [+]
+                                    <button class="minus-button">[-]</button> 0 <button class="plus-button">[+]</button>
                                 </td>
                             </tr>
                             <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -100,11 +137,11 @@
                                 </td>
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    [–] 1 [+]
+                                    <button class="minus-button">[-]</button> 1 <button class="plus-button">[+]</button>
                                 </td>
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    [–] 2 [+]
+                                    <button class="minus-button">[-]</button> 2 <button class="plus-button">[+]</button>
                                 </td>
                             </tr>
                             <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -118,11 +155,11 @@
                                 </td>
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    [–] 2 [+]
+                                    <button class="minus-button">[-]</button> 2 <button class="plus-button">[+]</button>
                                 </td>
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    [–] 1 [+]
+                                    <button class="minus-button">[-]</button> 1 <button class="plus-button">[+]</button>
                                 </td>
                             </tr>
                             <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
@@ -136,11 +173,11 @@
                                 </td>
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    [–] 2 [+]
+                                    <button class="minus-button">[-]</button> 2 <button class="plus-button">[+]</button>
                                 </td>
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    [–] 1 [+]
+                                    <button class="minus-button">[-]</button> 1 <button class="plus-button">[+]</button>
                                 </td>
                             </tr>
                         </tbody>

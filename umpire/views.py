@@ -22,15 +22,15 @@ def partai_kompetisi_view(request, event_name):
 
 from django.views.decorators.csrf import csrf_exempt
 from .db_functions import insert_new_match_in_event
-import datetime
+from datetime import datetime
 
 @csrf_exempt
 def insert_match_view(request):
     if request.method == 'POST':
         print(request.POST)
         jenis_babak = request.POST.get('jenis_babak')
-        tanggal = datetime.datetime.strptime(request.POST.get('tanggal'), '%Y-%m-%d').date() 
-        waktu_mulai = datetime.datetime.strptime(request.POST.get('waktu_mulai'), '%H:%M:%S').time()
+        tanggal = datetime.strptime(request.POST.get('tanggal'), '%Y-%m-%d').date() 
+        waktu_mulai = datetime.strptime(request.POST.get('waktu_mulai'), '%H:%M:%S').time()
         total_durasi = int(request.POST.get('total_durasi'))
         nama_event = request.POST.get('nama_event')
         tahun_event = int(request.POST.get('tahun_event'))

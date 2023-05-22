@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load tz %}
- 
+
 {% block meta %}
 <title>Badminton | Pertandingan</title>
 <script>
@@ -205,6 +205,39 @@
                     console.error('Error:', error);
                 });
         });
+
+        document.getElementById('nextButton').addEventListener('click', function () {
+            const stopwatchElement = document.getElementById('stopwatch');
+            const stopwatchValue = stopwatchElement.textContent;
+            var data = {
+                "No_Game": 100,
+                "Durasi": Math.floor(convertDurationToMinutes(stopwatchValue) / 60),
+                "Jenis_Babak": "{{ babak }}",
+                "Tanggal": "{{ starting_time }}",
+                "Waktu_Mulai": '{{ starting_time }}'
+            };
+
+            var formBody = [];
+            for (var property in data) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(data[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
+            }
+            formBody = formBody.join("&");
+
+            fetch('/your-endpoint-url', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+                body: formBody
+            })
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        });
     });
 </script>
 {% endblock meta %} {% block content %}
@@ -240,15 +273,15 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                            {% for match in match_data %}
+                            {% for game in match_data %}
                             <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    {{ match.0.5 }}
+                                    {{ game.0.5 }}
                                 </td>
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">
-                                    {{ match.1.5 }}
+                                    {{ game.1.5 }}
                                 </td>
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">

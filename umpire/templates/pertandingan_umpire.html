@@ -249,8 +249,8 @@
                 const cells = row.getElementsByTagName('td');
                 const tim1 = cells[0].textContent.trim();
                 const tim2 = cells[1].textContent.trim();
-                const skorTim1 = cells[2].textContent.trim();
-                const skorTim2 = cells[3].textContent.trim();
+                const skorTim1 = cells[4].textContent.trim();
+                const skorTim2 = cells[5].textContent.trim();
                 const skorTim1Value = convertSkorValue(skorTim1);
                 const skorTim2Value = convertSkorValue(skorTim2);
                 console.log("tim1: " + tim1)
@@ -259,7 +259,7 @@
                 console.log("skorTim2: " + skorTim2Value)
 
                 var dataGame = {
-                    "noGame": index,
+                    "No_Game": index,
                     "Durasi": Math.floor(convertDurationToMinutes(stopwatchValue) / 60),
                     "Jenis_Babak": "{{ babak }}",
                     "Tanggal": "{{ tanggal }}",
@@ -275,7 +275,7 @@
                 }
                 formBody = formBody.join("&");
 
-                fetch('/your-endpoint-url', {
+                fetch("{% url 'umpire:insert_game' %}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
@@ -289,7 +289,7 @@
                     });
 
                 var dataPesertaGame = {
-                    "noGame": index.toString(),
+                    "No_Game": index.toString(),
                     "Tim1": tim1.toString(),
                     "Tim2": tim2.toString(),
                     "SkorTim1": skorTim1Value,
@@ -304,7 +304,7 @@
                 }
                 formBody = formBody.join("&");
 
-                fetch('/your-endpoint-url', {
+                fetch("{% url 'umpire:insert_peserta_game' %}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
@@ -355,6 +355,14 @@
                         <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                             {% for game in match_data %}
                             <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <td
+                                    class=" hidden py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    {{ game.0.0 }}
+                                </td>
+                                <td
+                                    class=" hidden py-4 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">
+                                    {{ game.1.0 }}
+                                </td>
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                     {{ game.0.5 }}

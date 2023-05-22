@@ -138,14 +138,21 @@ from .db_functions import insert_into_peserta_mengikuti_game, insert_into_pesert
 @csrf_exempt
 @require_POST
 def insert_peserta_mengikuti_game_view(request):
-    data = {
-        "Nomor_Peserta": request.POST.get('Nomor_Peserta'),
+    data1 = {
+        "Nomor_Peserta": request.POST.get('Tim1'),
         "No_Game": request.POST.get('No_Game'),
-        "Skor": request.POST.get('Skor')
+        "Skor": request.POST.get('SkorTim1')
+    }
+
+    data2 = {
+        "Nomor_Peserta": request.POST.get('Tim2'),
+        "No_Game": request.POST.get('No_Game'),
+        "Skor": request.POST.get('SkorTim2')
     }
 
     try:
-        insert_into_peserta_mengikuti_game(**data)
+        insert_into_peserta_mengikuti_game(**data1)
+        insert_into_peserta_mengikuti_game(**data2)
         return JsonResponse({"status": "success"}, status=200)
     except Exception as e:
         return JsonResponse({"status": "fail", "error": str(e)}, status=400)

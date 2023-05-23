@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+{% load tz %}
+
+{% block meta %}
+<title>Badminton | Pertandingan</title>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var timer;
+        var startTime;
+
+        function startStopwatch() {
+            startTime = Date.now();
+
+            function updateStopwatch() {
+                var elapsedTime = Date.now() - startTime;
+                var minutes = Math.floor(elapsedTime / 60000);
+                var seconds = Math.floor((elapsedTime % 60000) / 1000);
+
+                // Pad single digits with leading zeros
+                minutes = minutes.toString().padStart(2, '0');
+                seconds = seconds.toString().padStart(2, '0');
+
+                var stopwatchText = '[' + minutes + ':' + seconds + ']';
+                document.getElementById('stopwatch').textContent = stopwatchText;
+
+                timer = setTimeout(updateStopwatch, 1000); // Update every 10 milliseconds
+            }
+
+            updateStopwatch();
+        }
+
+        // Start the stopwatch on page load
+        startStopwatch();
+
+        // Stop the stopwatch when the user leaves the page
+        window.addEventListener('beforeunload', function () {
+            clearTimeout(timer);
+        });
+
+        // Get all the buttons with class "decrement"
+        const decrementButtons = document.querySelectorAll(".minus-button");
+
+        // Add event listener to each decrement button
+        decrementButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                // Get the corresponding value element
+                const valueElement = button.parentNode.childNodes[2];
+
+                // Get the current value
+                let value = parseInt(valueElement.textContent);
+
+                // Update the value
+                value--;
+
+                // Update the value element with the new value
+                valueElement.textContent = value;
+            });
+        });
+
+        // Get all the buttons with class "increment"
+        const incrementButtons = document.querySelectorAll(".plus-button");
+
+        // Add event listener to each increment button
+        incrementButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                // Get the corresponding value element
+                const valueElement = button.parentNode.childNodes[2];
+
+                // Get the current value
+                let value = parseInt(valueElement.textContent);
+
+                // Update the value
+                value++;
+
+                // Update the value element with the new value
+                valueElement.textContent = value;
+            });
+        });
+
+        // Function to convert the skorTim value into a number
+        function convertSkorValue(value) {
+            return parseInt(value.split(' ')[1]);
+        }
+
+        // Function to convert duration to minutes
+        function convertDurationToMinutes(durationString) {
+            // Extract hours and minutes from the duration string
+            const durationRegex = /\[(\d{2}):(\d{2})\]/;
+            const matches = durationString.match(durationRegex);
+
+            if (matches && matches.length > 2) {
+                const hours = parseInt(matches[1]);
+                const minutes = parseInt(matches[2]);
+
+                // Calculate the total duration in minutes
+                const totalMinutes = hours * 60 + minutes;
+
+                return totalMinutes;
+            }
+
+            return 0; // Default value if the conversion fails
+        }
+
+        document.getElementById('nextButton').addEventListener('click', function () {
+            const stopwatchElement = document.getElementById('stopwatch');
+            const stopwatchValue = stopwatchElement.textContent;
+            const tableRows = document.querySelectorAll('#main-match tr');
+            // push match data
+            const dataMatch = {
+                jenis_babak: "{{ babak }}",
+                tanggal: "{{ tanggal }}",
+                waktu_mulai: '{{ starting_time }}',
+                total_durasi: Math.floor(convertDurationToMinutes(stopwatchValue) / 60),
+                nama_event: "{{ event_data.0 }}",
+                tahun_event: "{{ event_data.1 }}",
+                id_umpire: "190b1182-5174-4780-bd19-ce81b402e4dd"
+            };
+            const formBodyMatch = getFormBody(dataMatch);
+
+            fetch("{% url 'umpire:insert_match' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+                body: formBodyMatch
+            })
+                .then(response => response.json())
+                .then(data => {
+                    tableRows.forEach((row, index) => {
+                        const uniqueInteger = Date.now() % 100000;
+                        const cells = row.getElementsByTagName('td');
+                        const tim1 = cells[0].textContent.trim();
+                        const tim2 = cells[1].textContent.trim();
+                        const skorTim1 = cells[4].textContent.trim();
+                        const skorTim2 = cells[5].textContent.trim();
+                        const skorTim1Value = convertSkorValue(skorTim1);
+                        const skorTim2Value = convertSkorValue(skorTim2);
+
+
+
+                        // push game data
+                        const dataGame = {
+                            "No_Game": uniqueInteger,
+                            "Durasi": Math.floor(convertDurationToMinutes(stopwatchValue) / 60),
+                            "Jenis_Babak": "{{ babak }}",
+                            "Tanggal": "{{ tanggal }}",
+                            "Waktu_Mulai": '{{ starting_time }}'
+                        };
+                        const formBodyGame = getFormBody(dataGame);
+
+                        return fetch("{% url 'umpire:insert_game' %}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                            },
+                            body: formBodyGame
+                        }).then(response => response.json())
+                            .then(data => {
+                                // push peserta match data
+                                const dataPesertaMatch = {
+                                    "Jenis_Babak": "{{ babak }}",
+                                    "Tanggal": "{{ tanggal }}",
+                                    "Waktu_Mulai": '{{ starting_time }}',
+                                    "Nomor_Peserta1": tim1.toString(),
+                                    "Nomor_Peserta2": tim2.toString(),
+                                    "Status_Menang1": skorTim1Value > skorTim2Value ? "True" : "False",
+                                    "Status_Menang2": skorTim1Value < skorTim2Value ? "True" : "False",
+                                }
+                                const formBodyPesertaMatch = getFormBody(dataPesertaMatch);
+
+                                return fetch("{% url 'umpire:insert_peserta_match' %}", {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                                    },
+                                    body: formBodyPesertaMatch
+                                })
+                                    .then(data => {
+                                        // push peserta game data
+                                        const dataPesertaGame = {
+                                            "No_Game": uniqueInteger,
+                                            "Tim1": tim1.toString(),
+                                            "Tim2": tim2.toString(),
+                                            "SkorTim1": skorTim1Value,
+                                            "SkorTim2": skorTim2Value
+                                        };
+                                        const formBodyPesertaGame = getFormBody(dataPesertaGame);
+
+                                        return fetch("{% url 'umpire:insert_peserta_game' %}", {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                                            },
+                                            body: formBodyPesertaGame
+                                        })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                let url = "{% url 'umpire:next_match_data_view' babak='babak' tanggal='tanggal' event_name='event_name' waktu_mulai='waktu_mulai' %}";
+                                                url = url.replace('babak', "{{ babak }}");
+                                                url = url.replace('tanggal', "{{ tanggal }}");
+                                                url = url.replace('event_name', "{{ event_data.0 }}");
+                                                url = url.replace('waktu_mulai', "{{ starting_time }}");
+                                                window.location.href = url;
+                                            });
+                                    });
+                            })
+                            .then(response => response.json())
+
+                            .then(response => response.json())
+                            .then(data => console.log(data))
+                            .catch((error) => {
+                                console.error('Error:', error);
+                            });;
+                    })
+
+                });
+        });
+
+        function getFormBody(data) {
+            var formBody = [];
+            for (var property in data) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(data[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
+            }
+            return formBody.join("&");
+        }
+
+        if (document.querySelectorAll('#juara-3-match tr') != null) {
+            document.getElementById('nextButton').addEventListener('click', function () {
+                const stopwatchElement = document.getElementById('stopwatch');
+                const stopwatchValue = stopwatchElement.textContent;
+                const tableRows = document.querySelectorAll('#juara-3-match tr');
+                // push match data
+                const dataMatch = {
+                    jenis_babak: "Juara 3",
+                    tanggal: "{{ tanggal }}",
+                    waktu_mulai: '{{ starting_time }}',
+                    total_durasi: Math.floor(convertDurationToMinutes(stopwatchValue) / 60),
+                    nama_event: "{{ event_data.0 }}",
+                    tahun_event: "{{ event_data.1 }}",
+                    id_umpire: "190b1182-5174-4780-bd19-ce81b402e4dd"
+                };
+                const formBodyMatch = getFormBody(dataMatch);
+
+                fetch("{% url 'umpire:insert_match' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                    },
+                    body: formBodyMatch
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        tableRows.forEach((row, index) => {
+                            const uniqueInteger = Date.now() % 100000;
+                            const cells = row.getElementsByTagName('td');
+                            const tim1 = cells[0].textContent.trim();
+                            const tim2 = cells[1].textContent.trim();
+                            const skorTim1 = cells[4].textContent.trim();
+                            const skorTim2 = cells[5].textContent.trim();
+                            const skorTim1Value = convertSkorValue(skorTim1);
+                            const skorTim2Value = convertSkorValue(skorTim2);
+
+
+
+                            // push game data
+                            const dataGame = {
+                                "No_Game": uniqueInteger,
+                                "Durasi": Math.floor(convertDurationToMinutes(stopwatchValue) / 60),
+                                "Jenis_Babak": "Juara 3",
+                                "Tanggal": "{{ tanggal }}",
+                                "Waktu_Mulai": '{{ starting_time }}'
+                            };
+                            const formBodyGame = getFormBody(dataGame);
+
+                            return fetch("{% url 'umpire:insert_game' %}", {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                                },
+                                body: formBodyGame
+                            }).then(response => response.json())
+                                .then(data => {
+                                    // push peserta match data
+                                    const dataPesertaMatch = {
+                                        "Jenis_Babak": "Juara 3",
+                                        "Tanggal": "{{ tanggal }}",
+                                        "Waktu_Mulai": '{{ starting_time }}',
+                                        "Nomor_Peserta1": tim1.toString(),
+                                        "Nomor_Peserta2": tim2.toString(),
+                                        "Status_Menang1": skorTim1Value > skorTim2Value ? "True" : "False",
+                                        "Status_Menang2": skorTim1Value < skorTim2Value ? "True" : "False",
+                                    }
+                                    const formBodyPesertaMatch = getFormBody(dataPesertaMatch);
+
+                                    return fetch("{% url 'umpire:insert_peserta_match' %}", {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                                        },
+                                        body: formBodyPesertaMatch
+                                    })
+                                        .then(data => {
+                                            // push peserta game data
+                                            const dataPesertaGame = {
+                                                "No_Game": uniqueInteger,
+                                                "Tim1": tim1.toString(),
+                                                "Tim2": tim2.toString(),
+                                                "SkorTim1": skorTim1Value,
+                                                "SkorTim2": skorTim2Value
+                                            };
+                                            const formBodyPesertaGame = getFormBody(dataPesertaGame);
+
+                                            return fetch("{% url 'umpire:insert_peserta_game' %}", {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                                                },
+                                                body: formBodyPesertaGame
+                                            })
+                                                .then(response => response.json());
+                                        });
+                                })
+                                .then(response => response.json())
+
+                                .then(response => response.json())
+                                .then(data => console.log(data))
+                                .catch((error) => {
+                                    console.error('Error:', error);
+                                });;
+                        })
+
+                    });
+            });
+        }
+
+
+
+    });
+</script>
+{% endblock meta %} {% block content %}
+{% if juara_3_pairs %}
+<div class="max-w-2xl mx-auto my-20">
+    <h1>Babak JUARA 3</h1>
+    <div class="flex flex-col">
+        <div class="overflow-x-auto shadow-md sm:rounded-lg">
+            <div class="p-4 text-center">
+                <h1>PERTANDINGAN JUARA 3</h1>
+                <h1 id="stopwatch">[00:00]</h1>
+            </div>
+            <div class="inline-block min-w-full align-middle">
+                <div class="overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-700">
+                        <thead class="bg-gray-100 dark:bg-gray-700">
+                            <tr>
+                                <th scope="col"
+                                    class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
+                                    Tim 1
+                                </th>
+                                <th scope="col"
+                                    class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
+                                    Tim 2
+                                </th>
+                                <th scope="col"
+                                    class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
+                                    Skor Tim 1
+                                </th>
+                                <th scope="col"
+                                    class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
+                                    Skor Tim 2
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="juara-3-match"
+                            class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                            {% for game in juara_3_pairs %}
+                            <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <td
+                                    class=" hidden py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    {{ game.0.0 }}
+                                </td>
+                                <td
+                                    class=" hidden py-4 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">
+                                    {{ game.1.0 }}
+                                </td>
+                                <td
+                                    class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    {{ game.0.5 }}
+                                </td>
+                                <td
+                                    class="py-4 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">
+                                    {{ game.1.5 }}
+                                </td>
+                                <td
+                                    class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <button class="minus-button">[-]</button> 1 <button class="plus-button">[+]</button>
+                                </td>
+                                <td
+                                    class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <button class="minus-button">[-]</button> 0 <button class="plus-button">[+]</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endif %}
+
+
+
+<div class="max-w-2xl mx-auto my-20">
+    <h1>Babak {{ babak }}</h1>
+    <div class="flex flex-col">
+        <div class="overflow-x-auto shadow-md sm:rounded-lg">
+            <div class="p-4 text-center">
+                <h1>PERTANDINGAN {{ babak }}</h1>
+                <h1 id="stopwatch">[00:00]</h1>
+            </div>
+            <div class="inline-block min-w-full align-middle">
+                <div class="overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-700">
+                        <thead class="bg-gray-100 dark:bg-gray-700">
+                            <tr>
+                                <th scope="col"
+                                    class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
+                                    Tim 1
+                                </th>
+                                <th scope="col"
+                                    class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
+                                    Tim 2
+                                </th>
+                                <th scope="col"
+                                    class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
+                                    Skor Tim 1
+                                </th>
+                                <th scope="col"
+                                    class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
+                                    Skor Tim 2
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="main-match"
+                            class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                            {% for game in match_data %}
+                            <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <td
+                                    class=" hidden py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    {{ game.0.0 }}
+                                </td>
+                                <td
+                                    class=" hidden py-4 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">
+                                    {{ game.1.0 }}
+                                </td>
+                                <td
+                                    class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    {{ game.0.5 }}
+                                </td>
+                                <td
+                                    class="py-4 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">
+                                    {{ game.1.5 }}
+                                </td>
+                                <td
+                                    class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <button class="minus-button">[-]</button> 1 <button class="plus-button">[+]</button>
+                                </td>
+                                <td
+                                    class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <button class="minus-button">[-]</button> 0 <button class="plus-button">[+]</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="p-4 text-center">
+                <button id="nextButton">[NEXT]</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}

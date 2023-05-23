@@ -231,6 +231,79 @@
     });
 </script>
 {% endblock meta %} {% block content %}
+{% if juara_3_pairs %}
+<div class="max-w-2xl mx-auto my-20">
+    <h1>Babak JUARA 3</h1>
+    <div class="flex flex-col">
+        <div class="overflow-x-auto shadow-md sm:rounded-lg">
+            <div class="p-4 text-center">
+                <h1>PERTANDINGAN JUARA 3</h1>
+                <h1 id="stopwatch">[00:00]</h1>
+            </div>
+            <div class="inline-block min-w-full align-middle">
+                <div class="overflow-hidden">
+                    <table class="min-w-full divide-y divide-gray-200 table-fixed dark:divide-gray-700">
+                        <thead class="bg-gray-100 dark:bg-gray-700">
+                            <tr>
+                                <th scope="col"
+                                    class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
+                                    Tim 1
+                                </th>
+                                <th scope="col"
+                                    class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
+                                    Tim 2
+                                </th>
+                                <th scope="col"
+                                    class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
+                                    Skor Tim 1
+                                </th>
+                                <th scope="col"
+                                    class="py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400">
+                                    Skor Tim 2
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="main-match" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                            {% for game in juara_3_pairs %}
+                            <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <td
+                                    class=" hidden py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    {{ game.0.0 }}
+                                </td>
+                                <td
+                                    class=" hidden py-4 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">
+                                    {{ game.1.0 }}
+                                </td>
+                                <td
+                                    class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    {{ game.0.5 }}
+                                </td>
+                                <td
+                                    class="py-4 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">
+                                    {{ game.1.5 }}
+                                </td>
+                                <td
+                                    class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <button class="minus-button">[-]</button> 1 <button class="plus-button">[+]</button>
+                                </td>
+                                <td
+                                    class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                    <button class="minus-button">[-]</button> 0 <button class="plus-button">[+]</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endif %}
+
+
+
 <div class="max-w-2xl mx-auto my-20">
     <h1>Babak {{ babak }}</h1>
     <div class="flex flex-col">

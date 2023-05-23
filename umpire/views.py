@@ -131,7 +131,7 @@ def next_babak_match_data_view(request, babak, tanggal, waktu_mulai, event_name)
         juara_3_pairs = []
         while len(peserta_kompetisi) > 1:
             pair = random.sample(peserta_kompetisi, 2)
-            juara_3_pairs.append(juara_3_pairs)
+            juara_3_pairs.append(pair)
             peserta_kompetisi.remove(pair[0])
             peserta_kompetisi.remove(pair[1])
         

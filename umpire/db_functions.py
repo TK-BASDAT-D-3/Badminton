@@ -33,20 +33,6 @@ def get_partai_kompetisi_in_event(event_name):
     return rows
 
 
-def update_durasi_in_match(jenis_babak, tanggal, waktu_mulai, new_durasi):
-    with connection.cursor() as cursor:
-        search_path = "badudu"
-        cursor.execute(f"SET search_path TO {search_path}")
-        cursor.execute(
-            """
-            UPDATE MATCH
-            SET Total_Durasi = %s
-            WHERE Jenis_Babak = %s AND Tanggal = %s AND Waktu_Mulai = %s
-        """,
-            [new_durasi, jenis_babak, tanggal, waktu_mulai],
-        )
-
-
 def add_or_update_point_history(peserta_id, babak, kategori, minggu_ke, bulan, tahun):
     point_map = {
         "Super": {
@@ -246,8 +232,6 @@ def get_peserta_kompetisi_data(event_name):
             [event_name],
         )
         peserta_kompetisi = cursor.fetchall()
-        atlet_ganda_data = []
-        atlet_kualifikasi_data = []
         for index, peserta in enumerate(peserta_kompetisi):
             if peserta[1]:
                 data_atlet_ganda = get_atlet_ganda(peserta[1])
@@ -256,17 +240,13 @@ def get_peserta_kompetisi_data(event_name):
                 peserta_kompetisi[index] = peserta + (
                     data_atlet_1 + " & " + data_atlet_2,
                 )
-                atlet_ganda_data.append(peserta_kompetisi[index])
             elif peserta[2]:
                 peserta_kompetisi[index] = peserta + (
                     get_nama_from_id_atlet(peserta[2]),
                 )
-                atlet_kualifikasi_data.append(peserta_kompetisi[index])
 
     return {
         "peserta_kompetisi": peserta_kompetisi,
-        "atlet_ganda_data": atlet_ganda_data,
-        "atlet_kualifikasi_data": atlet_kualifikasi_data,
     }
 
 
@@ -284,8 +264,6 @@ def get_pemenang_data_from_match_id(babak, tanggal, waktu_mulai):
             [babak, tanggal, waktu_mulai],
         )
         peserta_kompetisi = cursor.fetchall()
-        atlet_ganda_data = []
-        atlet_kualifikasi_data = []
         for index, peserta in enumerate(peserta_kompetisi):
             if peserta[1]:
                 data_atlet_ganda = get_atlet_ganda(peserta[1])
@@ -294,17 +272,13 @@ def get_pemenang_data_from_match_id(babak, tanggal, waktu_mulai):
                 peserta_kompetisi[index] = peserta + (
                     data_atlet_1 + " & " + data_atlet_2,
                 )
-                atlet_ganda_data.append(peserta_kompetisi[index])
             elif peserta[2]:
                 peserta_kompetisi[index] = peserta + (
                     get_nama_from_id_atlet(peserta[2]),
                 )
-                atlet_kualifikasi_data.append(peserta_kompetisi[index])
 
     return {
         "peserta_kompetisi": peserta_kompetisi,
-        "atlet_ganda_data": atlet_ganda_data,
-        "atlet_kualifikasi_data": atlet_kualifikasi_data,
     }
 
 def get_peserta_kalah_data_from_match_id(babak, tanggal, waktu_mulai):
@@ -321,8 +295,6 @@ def get_peserta_kalah_data_from_match_id(babak, tanggal, waktu_mulai):
             [babak, tanggal, waktu_mulai],
         )
         peserta_kompetisi = cursor.fetchall()
-        atlet_ganda_data = []
-        atlet_kualifikasi_data = []
         for index, peserta in enumerate(peserta_kompetisi):
             if peserta[1]:
                 data_atlet_ganda = get_atlet_ganda(peserta[1])
@@ -331,15 +303,11 @@ def get_peserta_kalah_data_from_match_id(babak, tanggal, waktu_mulai):
                 peserta_kompetisi[index] = peserta + (
                     data_atlet_1 + " & " + data_atlet_2,
                 )
-                atlet_ganda_data.append(peserta_kompetisi[index])
             elif peserta[2]:
                 peserta_kompetisi[index] = peserta + (
                     get_nama_from_id_atlet(peserta[2]),
                 )
-                atlet_kualifikasi_data.append(peserta_kompetisi[index])
 
     return {
         "peserta_kompetisi": peserta_kompetisi,
-        "atlet_ganda_data": atlet_ganda_data,
-        "atlet_kualifikasi_data": atlet_kualifikasi_data,
     }

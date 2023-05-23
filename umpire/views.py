@@ -40,29 +40,7 @@ def insert_match_view(request):
         return JsonResponse({'status': 'success'})
     else:
         return JsonResponse({'status': 'Invalid HTTP method'})
-
-from .db_functions import update_durasi_in_match
-
-@csrf_exempt
-def update_durasi_view(request):
-    if request.method == 'POST':
-        jenis_babak = request.POST.get('jenis_babak')
-        tanggal = request.POST.get('tanggal')
-        waktu_mulai = request.POST.get('waktu_mulai')
-        new_durasi = request.POST.get('new_durasi')
-
-        if not all([jenis_babak, tanggal, waktu_mulai, new_durasi]):
-            return JsonResponse({'error': 'Missing required parameters'}, status=400)
-
-        update_durasi_in_match(jenis_babak, tanggal, waktu_mulai, new_durasi)
-
-        return JsonResponse({'status': 'success'})
     
-from .db_functions import get_peserta_kompetisi_data
-
-def peserta_kompetisi_data_view(request, event_name):
-    data = get_peserta_kompetisi_data(event_name)
-    return JsonResponse(data)
 
 from django.core.cache import cache
 import random
@@ -123,6 +101,7 @@ def next_babak_match_data_view(request, babak, tanggal, waktu_mulai, event_name)
         next_babak = 'Final'
     elif babak == 'Final':
         next_babak = 'Selesai'
+        return hasil_pertandingan_view(request)
     context = {'match_data': random_pairs, "event_data": event_data, "babak": next_babak, "starting_time": (datetime.now() + timedelta(hours=7)).strftime("%H:%M:%S"), "tanggal": (datetime.now() + timedelta(hours=7)).strftime("%Y-%m-%d")}
 
     if next_babak == 'Final':
@@ -141,8 +120,8 @@ def next_babak_match_data_view(request, babak, tanggal, waktu_mulai, event_name)
     
     return render(request, 'pertandingan_umpire.html', context)
 
-def hasil_pertandingan_view():
-    return
+def hasil_pertandingan_view(request):
+    return render(request, 'r_hasil_pertandingan_umpire.html')
 
 from django.http import JsonResponse
 from .db_functions import add_or_update_point_history

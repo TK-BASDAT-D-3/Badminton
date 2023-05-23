@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from .db_functions import get_all_event_data, get_event_data, get_peserta_kompetisi_data
+from .db_functions import get_all_event_data, get_event_data, get_peserta_kompetisi_data, get_pemenang_data_from_match_id
 from django.shortcuts import render
 
 def show_pilih_event(request):
@@ -71,7 +71,6 @@ from datetime import datetime, timedelta
 def match_data_view(request, event_name, babak):
     data = get_peserta_kompetisi_data(event_name)
     peserta_kompetisi = data['peserta_kompetisi']
-    map_id_to_nama = data['map_id_to_nama']
     event_data = get_event_data(event_name)
     # Define the number of pairs needed based on the "babak" argument
     pairs_needed = {
@@ -82,17 +81,47 @@ def match_data_view(request, event_name, babak):
         'Final': 1
     }
 
-    if babak not in pairs_needed:
-        return JsonResponse({'error': 'Invalid babak parameter'}, status=400)
+    if len(peserta_kompetisi) < 2:
+        return JsonResponse({'error': 'Not enough peserta kompetisi'}, status=400)
     
-    if len(peserta_kompetisi) < pairs_needed[babak] * 2:
-        return JsonResponse({'error': 'Not enough peserta for the specified babak'}, status=400)
+    if len(peserta_kompetisi) >= pairs_needed['R32'] * 2:
+        babak = 'R32'
+    elif len(peserta_kompetisi) >= pairs_needed['R16'] * 2:
+        babak = 'R16'
+    elif len(peserta_kompetisi) >= pairs_needed['Perempat final'] * 2:
+        babak = 'Perempat final'
+    elif len(peserta_kompetisi) >= pairs_needed['Semifinal'] * 2:
+        babak = 'Semifinal'
+    elif len(peserta_kompetisi) >= pairs_needed['Final'] * 2:
+        babak = 'Final'
     
     random_pairs = [random.sample(peserta_kompetisi, 2) for _ in range(pairs_needed[babak])]
-    context = {'match_data': random_pairs, "map_id_to_nama": map_id_to_nama, "event_data": event_data, "babak": babak, "starting_time": (datetime.now() + timedelta(hours=7)).strftime("%H:%M:%S"), "tanggal": (datetime.now() + timedelta(hours=7)).strftime("%Y-%m-%d")}
+    context = {'match_data': random_pairs, "event_data": event_data, "babak": babak, "starting_time": (datetime.now() + timedelta(hours=7)).strftime("%H:%M:%S"), "tanggal": (datetime.now() + timedelta(hours=7)).strftime("%Y-%m-%d")}
     print(context)
     return render(request, 'pertandingan_umpire.html', context)
 
+def next_babak_match_data_view(request, babak, tanggal, waktu_mulai, event_name):
+    data = get_pemenang_data_from_match_id(babak, tanggal, waktu_mulai)
+    peserta_kompetisi = data['peserta_kompetisi']
+    event_data = get_event_data(event_name)
+    random_pairs = [random.sample(peserta_kompetisi, 2) for _ in range(len(peserta_kompetisi) // 2)]
+    next_babak = ''
+    if babak == 'R32':
+        next_babak = 'R16'
+    elif babak == 'R16':
+        next_babak = 'Perempat final'
+    elif babak == 'Perempat final':
+        next_babak = 'Semifinal'
+    elif babak == 'Semifinal':
+        next_babak = 'Final'
+    elif babak == 'Final':
+        next_babak = 'Selesai'
+    
+    context = {'match_data': random_pairs, "event_data": event_data, "babak": next_babak, "starting_time": (datetime.now() + timedelta(hours=7)).strftime("%H:%M:%S"), "tanggal": (datetime.now() + timedelta(hours=7)).strftime("%Y-%m-%d")}
+    return render(request, 'pertandingan_umpire.html', context)
+
+def hasil_pertandingan_view():
+    return
 
 from django.http import JsonResponse
 from .db_functions import add_or_update_point_history
@@ -160,19 +189,29 @@ def insert_peserta_mengikuti_game_view(request):
 @csrf_exempt
 @require_POST
 def insert_peserta_mengikuti_match_view(request):
-    data = {
+    data1 = {
             "Jenis_Babak": request.POST.get('Jenis_Babak'),
             "Tanggal": request.POST.get('Tanggal'),
             "Waktu_Mulai": request.POST.get('Waktu_Mulai'),
-            "Nomor_Peserta": request.POST.get('Nomor_Peserta'),
-            "Status_Menang": request.POST.get('Status_Menang'),
+            "Nomor_Peserta": request.POST.get('Nomor_Peserta1'),
+            "Status_Menang": request.POST.get('Status_Menang1'),
         }
+    
+    data2 = {
+            "Jenis_Babak": request.POST.get('Jenis_Babak'),
+            "Tanggal": request.POST.get('Tanggal'),
+            "Waktu_Mulai": request.POST.get('Waktu_Mulai'),
+            "Nomor_Peserta": request.POST.get('Nomor_Peserta2'),
+            "Status_Menang": request.POST.get('Status_Menang2'),
+    }
 
     try:
-        insert_into_peserta_mengikuti_match(**data)
+        insert_into_peserta_mengikuti_match(**data1)
+        insert_into_peserta_mengikuti_match(**data2)
         return JsonResponse({"status": "success"}, status=200)
     except Exception as e:
         return JsonResponse({"status": "fail", "error": str(e)}, status=400)
+    
     
 
 

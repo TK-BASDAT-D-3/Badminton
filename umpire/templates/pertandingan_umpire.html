@@ -79,7 +79,7 @@
 
         // Function to convert the skorTim value into a number
         function convertSkorValue(value) {
-            return value.split(' ')[1];
+            return parseInt(value.split(' ')[1]);
         }
 
         // Function to convert duration to minutes
@@ -101,113 +101,12 @@
             return 0; // Default value if the conversion fails
         }
 
-
-        // Function to send data to the server
-        function sendDataPesertaGame(stopwatch, noGame, tim1, tim2, skorTim1, skorTim2) {
-            // Make an AJAX request to the server
-            // Replace `YOUR_SERVER_ENDPOINT` with the actual endpoint URL
-            // Include any necessary data in the request body or query parameters
-            fetch('http://localhost:8000/umpire/event-data/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    noGame: noGame,
-                    stopwatch: stopwatch,
-                    tim1: tim1,
-                    tim2: tim2,
-                    skorTim1: skorTim1,
-                    skorTim2: skorTim2
-                })
-            })
-                .then(response => {
-                    // Handle the response from the server
-                    // You can add any necessary logic here
-                    console.log('Data skor sent successfully!');
-                })
-                .catch(error => {
-                    // Handle any errors that occurred during the request
-                    console.error('Error sending data:', error);
-                });
-        }
-
-        function sendDataGame(stopwatch, noGame, jenis_babak, tanggal, waktu_mulai) {
-            fetch('http://localhost:8000/umpire/event-data/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    stopwatch: stopwatch,
-                    noGame: index,
-                    Jenis_Babak: Jenis_Babak,
-                    Tanggal: Tanggal,
-                    Waktu_Mulai: Waktu_Mulai
-                })
-            })
-                .then(response => {
-                    // Handle the response from the server
-                    // You can add any necessary logic here
-                    console.log('Data game sent successfully!');
-                })
-                .catch(error => {
-                    // Handle any errors that occurred during the request
-                    console.error('Error sending data:', error);
-                });
-        }
-
-        // // Get the next button element
-        // const nextButton = document.getElementById('nextButton');
-
-        // Add event listener to the next button
-        // nextButton.addEventListener('click', () => {
-        //     // Get the stopwatch value
-        //     const stopwatchElement = document.getElementById('stopwatch');
-        //     const stopwatchValue = stopwatchElement.textContent;
-
-        //     // Get the values from the table cells
-        //     const tableRows = document.querySelectorAll('tbody tr');
-
-        //     const dataPesertaGame = [];
-        //     const dataGame = [];
-
-        //     tableRows.forEach((row, index) => {
-        //         const cells = row.getElementsByTagName('td');
-        //         const tim1 = cells[0].textContent.trim();
-        //         const tim2 = cells[1].textContent.trim();
-        //         const skorTim1 = cells[2].textContent.trim();
-        //         const skorTim2 = cells[3].textContent.trim();
-        //         const skorTim1Value = convertSkorValue(skorTim1);
-        //         const skorTim2Value = convertSkorValue(skorTim2);
-
-        //         var data = {
-        //             "noGame": index,
-        //             "Jenis_Babak": "{{ babak }}",
-        //             "Tanggal": "{{ tanggal }}",
-        //             "Waktu_Mulai": '{{ starting_time }}'
-        //         };
-
-        //         dataGame.push(data);
-
-        //         dataPesertaGame.push({
-        //             noGame: index,
-        //             tim1: tim1,
-        //             tim2: tim2,
-        //             skorTim1: skorTim1Value,
-        //             skorTim2: skorTim2Value
-        //         });
-        //     });
-        //     sendDataGame(convertDurationToMinutes(stopwatchValue), dataGame)
-
-        //     // Send the data to the server
-        //     sendDataPesertaGame(convertDurationToMinutes(stopwatchValue), dataPesertaGame);
-        // });
-
         document.getElementById('nextButton').addEventListener('click', function () {
             const stopwatchElement = document.getElementById('stopwatch');
             const stopwatchValue = stopwatchElement.textContent;
-            var data = {
+            const tableRows = document.querySelectorAll('tbody tr');
+            // push match data
+            const dataMatch = {
                 jenis_babak: "{{ babak }}",
                 tanggal: "{{ tanggal }}",
                 waktu_mulai: '{{ starting_time }}',
@@ -216,117 +115,128 @@
                 tahun_event: "{{ event_data.1 }}",
                 id_umpire: "190b1182-5174-4780-bd19-ce81b402e4dd"
             };
-
-            var formBody = [];
-            for (var property in data) {
-                var encodedKey = encodeURIComponent(property);
-                var encodedValue = encodeURIComponent(data[property]);
-                formBody.push(encodedKey + "=" + encodedValue);
-            }
-            formBody = formBody.join("&");
+            const formBodyMatch = getFormBody(dataMatch);
 
             fetch("{% url 'umpire:insert_match' %}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
                 },
-                body: formBody
+                body: formBodyMatch
             })
                 .then(response => response.json())
-                .then(data => console.log(data))
-                .catch((error) => {
-                    console.error('Error:', error);
+                .then(data => {
+                    tableRows.forEach((row, index) => {
+                        const uniqueInteger = Date.now() % 100000;
+                        const cells = row.getElementsByTagName('td');
+                        const tim1 = cells[0].textContent.trim();
+                        const tim2 = cells[1].textContent.trim();
+                        const skorTim1 = cells[4].textContent.trim();
+                        const skorTim2 = cells[5].textContent.trim();
+                        const skorTim1Value = convertSkorValue(skorTim1);
+                        const skorTim2Value = convertSkorValue(skorTim2);
+
+
+
+                        // push game data
+                        const dataGame = {
+                            "No_Game": uniqueInteger,
+                            "Durasi": Math.floor(convertDurationToMinutes(stopwatchValue) / 60),
+                            "Jenis_Babak": "{{ babak }}",
+                            "Tanggal": "{{ tanggal }}",
+                            "Waktu_Mulai": '{{ starting_time }}'
+                        };
+                        const formBodyGame = getFormBody(dataGame);
+
+                        return fetch("{% url 'umpire:insert_game' %}", {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                            },
+                            body: formBodyGame
+                        }).then(response => response.json())
+                            .then(data => {
+                                // push peserta match data
+                                const dataPesertaMatch = {
+                                    "Jenis_Babak": "{{ babak }}",
+                                    "Tanggal": "{{ tanggal }}",
+                                    "Waktu_Mulai": '{{ starting_time }}',
+                                    "Nomor_Peserta1": tim1.toString(),
+                                    "Nomor_Peserta2": tim2.toString(),
+                                    "Status_Menang1": skorTim1Value > skorTim2Value ? "True" : "False",
+                                    "Status_Menang2": skorTim1Value < skorTim2Value ? "True" : "False",
+                                }
+                                const formBodyPesertaMatch = getFormBody(dataPesertaMatch);
+
+                                return fetch("{% url 'umpire:insert_peserta_match' %}", {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                                    },
+                                    body: formBodyPesertaMatch
+                                })
+                                    .then(data => {
+                                        // push peserta game data
+                                        const dataPesertaGame = {
+                                            "No_Game": uniqueInteger,
+                                            "Tim1": tim1.toString(),
+                                            "Tim2": tim2.toString(),
+                                            "SkorTim1": skorTim1Value,
+                                            "SkorTim2": skorTim2Value
+                                        };
+                                        const formBodyPesertaGame = getFormBody(dataPesertaGame);
+
+                                        return fetch("{% url 'umpire:insert_peserta_game' %}", {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                                            },
+                                            body: formBodyPesertaGame
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            let url = "{% url 'umpire:next_match_data_view' babak='babak' tanggal='tanggal' event_name='event_name' waktu_mulai='waktu_mulai' %}";
+                                            url = url.replace('babak', "{{ babak }}");
+                                            url = url.replace('tanggal', "{{ tanggal }}");
+                                            url = url.replace('event_name', "{{ event_data.0 }}");
+                                            url = url.replace('waktu_mulai', "{{ starting_time }}");
+                                            window.location.href = url;
+                                        });
+                                    });
+                            })
+                            .then(response => response.json())
+
+                            .then(response => response.json())
+                            .then(data => console.log(data))
+                            .catch((error) => {
+                                console.error('Error:', error);
+                            });;
+                    })
+
                 });
         });
 
-        document.getElementById('nextButton').addEventListener('click', function () {
-            const stopwatchElement = document.getElementById('stopwatch');
-            const stopwatchValue = stopwatchElement.textContent;
-            const tableRows = document.querySelectorAll('tbody tr');
-
-            tableRows.forEach((row, index) => {
-                console.log("index: " + index)
-                const cells = row.getElementsByTagName('td');
-                const tim1 = cells[0].textContent.trim();
-                const tim2 = cells[1].textContent.trim();
-                const skorTim1 = cells[4].textContent.trim();
-                const skorTim2 = cells[5].textContent.trim();
-                const skorTim1Value = convertSkorValue(skorTim1);
-                const skorTim2Value = convertSkorValue(skorTim2);
-                console.log("tim1: " + tim1)
-                console.log("tim2: " + tim2)
-                console.log("skorTim1: " + skorTim1Value)
-                console.log("skorTim2: " + skorTim2Value)
-
-                var dataGame = {
-                    "No_Game": index,
-                    "Durasi": Math.floor(convertDurationToMinutes(stopwatchValue) / 60),
-                    "Jenis_Babak": "{{ babak }}",
-                    "Tanggal": "{{ tanggal }}",
-                    "Waktu_Mulai": '{{ starting_time }}'
-                };
+        function getFormBody(data) {
+            var formBody = [];
+            for (var property in data) {
+                var encodedKey = encodeURIComponent(property);
+                var encodedValue = encodeURIComponent(data[property]);
+                formBody.push(encodedKey + "=" + encodedValue);
+            }
+            return formBody.join("&");
+        }
 
 
-                var formBody = [];
-                for (var property in dataGame) {
-                    var encodedKey = encodeURIComponent(property);
-                    var encodedValue = encodeURIComponent(dataGame[property]);
-                    formBody.push(encodedKey + "=" + encodedValue);
-                }
-                formBody = formBody.join("&");
 
-                fetch("{% url 'umpire:insert_game' %}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-                    },
-                    body: formBody
-                })
-                    .then(response => response.json())
-                    .then(data => console.log(data))
-                    .catch((error) => {
-                        console.error('Error:', error);
-                    });
-
-                var dataPesertaGame = {
-                    "No_Game": index.toString(),
-                    "Tim1": tim1.toString(),
-                    "Tim2": tim2.toString(),
-                    "SkorTim1": skorTim1Value,
-                    "SkorTim2": skorTim2Value
-                };
-
-                var formBody = [];
-                for (var property in dataPesertaGame) {
-                    var encodedKey = encodeURIComponent(property);
-                    var encodedValue = encodeURIComponent(dataPesertaGame[property]);
-                    formBody.push(encodedKey + "=" + encodedValue);
-                }
-                formBody = formBody.join("&");
-
-                fetch("{% url 'umpire:insert_peserta_game' %}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-                    },
-                    body: formBody
-                })
-                    .then(response => response.json())
-                    .then(data => console.log(data))
-                    .catch((error) => {
-                        console.error('Error:', error);
-                    });
-            });
-        });
     });
 </script>
 {% endblock meta %} {% block content %}
 <div class="max-w-2xl mx-auto my-20">
-    <h1>Babak Perempat Final</h1>
+    <h1>Babak {{ babak }}</h1>
     <div class="flex flex-col">
         <div class="overflow-x-auto shadow-md sm:rounded-lg">
             <div class="p-4 text-center">
-                <h1>PERTANDINGAN PEREMPAT FINAL</h1>
+                <h1>PERTANDINGAN {{ babak }}</h1>
                 <h1 id="stopwatch">[00:00]</h1>
             </div>
             <div class="inline-block min-w-full align-middle">

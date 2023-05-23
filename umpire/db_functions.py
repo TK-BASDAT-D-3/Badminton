@@ -306,3 +306,40 @@ def get_pemenang_data_from_match_id(babak, tanggal, waktu_mulai):
         "atlet_ganda_data": atlet_ganda_data,
         "atlet_kualifikasi_data": atlet_kualifikasi_data,
     }
+
+def get_peserta_kalah_data_from_match_id(babak, tanggal, waktu_mulai):
+    with connection.cursor() as cursor:
+        search_path = "badudu"
+        cursor.execute(f"SET search_path TO {search_path}")
+        cursor.execute(
+            """
+            select peserta_kompetisi.nomor_peserta, peserta_kompetisi.id_atlet_ganda, peserta_kompetisi.id_atlet_kualifikasi, peserta_kompetisi.world_rank, peserta_kompetisi.world_tour_rank from badudu."match" 
+            join badudu.peserta_mengikuti_match ON peserta_mengikuti_match.jenis_babak = "match".jenis_babak and peserta_mengikuti_match.tanggal = "match".tanggal and peserta_mengikuti_match.waktu_mulai = "match".waktu_mulai 
+            join badudu.peserta_kompetisi ON peserta_kompetisi.nomor_peserta = peserta_mengikuti_match.nomor_peserta
+            where peserta_mengikuti_match.status_menang=false and "match".jenis_babak= %s and "match".tanggal= %s and "match".waktu_mulai= %s
+        """,
+            [babak, tanggal, waktu_mulai],
+        )
+        peserta_kompetisi = cursor.fetchall()
+        atlet_ganda_data = []
+        atlet_kualifikasi_data = []
+        for index, peserta in enumerate(peserta_kompetisi):
+            if peserta[1]:
+                data_atlet_ganda = get_atlet_ganda(peserta[1])
+                data_atlet_1 = get_nama_from_id_atlet(data_atlet_ganda[1])
+                data_atlet_2 = get_nama_from_id_atlet(data_atlet_ganda[2])
+                peserta_kompetisi[index] = peserta + (
+                    data_atlet_1 + " & " + data_atlet_2,
+                )
+                atlet_ganda_data.append(peserta_kompetisi[index])
+            elif peserta[2]:
+                peserta_kompetisi[index] = peserta + (
+                    get_nama_from_id_atlet(peserta[2]),
+                )
+                atlet_kualifikasi_data.append(peserta_kompetisi[index])
+
+    return {
+        "peserta_kompetisi": peserta_kompetisi,
+        "atlet_ganda_data": atlet_ganda_data,
+        "atlet_kualifikasi_data": atlet_kualifikasi_data,
+    }

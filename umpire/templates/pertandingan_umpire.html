@@ -104,7 +104,7 @@
         document.getElementById('nextButton').addEventListener('click', function () {
             const stopwatchElement = document.getElementById('stopwatch');
             const stopwatchValue = stopwatchElement.textContent;
-            const tableRows = document.querySelectorAll('tbody tr');
+            const tableRows = document.querySelectorAll('#main-match tr');
             // push match data
             const dataMatch = {
                 jenis_babak: "{{ babak }}",
@@ -262,7 +262,7 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                        <tbody id="main-match" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                             {% for game in match_data %}
                             <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                                 <td

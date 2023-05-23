@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from .db_functions import get_all_event_data, get_event_data, get_peserta_kompetisi_data, get_pemenang_data_from_match_id
+from .db_functions import get_all_event_data, get_event_data, get_peserta_kompetisi_data, get_pemenang_data_from_match_id, get_peserta_kalah_data_from_match_id
 from django.shortcuts import render
 
 def show_pilih_event(request):
@@ -71,8 +71,9 @@ from datetime import datetime, timedelta
 def match_data_view(request, event_name, babak):
     data = get_peserta_kompetisi_data(event_name)
     peserta_kompetisi = data['peserta_kompetisi']
+    print(peserta_kompetisi)
     event_data = get_event_data(event_name)
-    # Define the number of pairs needed based on the "babak" argument
+
     pairs_needed = {
         'R32': 16,
         'R16': 8,
@@ -84,27 +85,33 @@ def match_data_view(request, event_name, babak):
     if len(peserta_kompetisi) < 2:
         return JsonResponse({'error': 'Not enough peserta kompetisi'}, status=400)
     
-    if len(peserta_kompetisi) >= pairs_needed['R32'] * 2:
-        babak = 'R32'
-    elif len(peserta_kompetisi) >= pairs_needed['R16'] * 2:
-        babak = 'R16'
-    elif len(peserta_kompetisi) >= pairs_needed['Perempat final'] * 2:
-        babak = 'Perempat final'
-    elif len(peserta_kompetisi) >= pairs_needed['Semifinal'] * 2:
-        babak = 'Semifinal'
-    elif len(peserta_kompetisi) >= pairs_needed['Final'] * 2:
-        babak = 'Final'
+    babak_keys = list(pairs_needed.keys())
+    for babak_key in babak_keys:
+        if len(peserta_kompetisi) >= pairs_needed[babak_key] * 2:
+            babak = babak_key
+            break
     
-    random_pairs = [random.sample(peserta_kompetisi, 2) for _ in range(pairs_needed[babak])]
+    random_pairs = []
+    while len(peserta_kompetisi) > 1:
+        pair = random.sample(peserta_kompetisi, 2)
+        random_pairs.append(pair)
+        peserta_kompetisi.remove(pair[0])
+        peserta_kompetisi.remove(pair[1])
+
     context = {'match_data': random_pairs, "event_data": event_data, "babak": babak, "starting_time": (datetime.now() + timedelta(hours=7)).strftime("%H:%M:%S"), "tanggal": (datetime.now() + timedelta(hours=7)).strftime("%Y-%m-%d")}
-    print(context)
     return render(request, 'pertandingan_umpire.html', context)
 
 def next_babak_match_data_view(request, babak, tanggal, waktu_mulai, event_name):
     data = get_pemenang_data_from_match_id(babak, tanggal, waktu_mulai)
     peserta_kompetisi = data['peserta_kompetisi']
     event_data = get_event_data(event_name)
-    random_pairs = [random.sample(peserta_kompetisi, 2) for _ in range(len(peserta_kompetisi) // 2)]
+    random_pairs = []
+    while len(peserta_kompetisi) > 1:
+        pair = random.sample(peserta_kompetisi, 2)
+        random_pairs.append(pair)
+        peserta_kompetisi.remove(pair[0])
+        peserta_kompetisi.remove(pair[1])
+
     next_babak = ''
     if babak == 'R32':
         next_babak = 'R16'
@@ -116,8 +123,22 @@ def next_babak_match_data_view(request, babak, tanggal, waktu_mulai, event_name)
         next_babak = 'Final'
     elif babak == 'Final':
         next_babak = 'Selesai'
-    
     context = {'match_data': random_pairs, "event_data": event_data, "babak": next_babak, "starting_time": (datetime.now() + timedelta(hours=7)).strftime("%H:%M:%S"), "tanggal": (datetime.now() + timedelta(hours=7)).strftime("%Y-%m-%d")}
+
+    if next_babak == 'Final':
+        data_peserta_kalah = get_peserta_kalah_data_from_match_id(babak, tanggal, waktu_mulai)
+        peserta_kompetisi = data_peserta_kalah['peserta_kompetisi']
+        juara_3_pairs = []
+        while len(peserta_kompetisi) > 1:
+            pair = random.sample(peserta_kompetisi, 2)
+            juara_3_pairs.append(juara_3_pairs)
+            peserta_kompetisi.remove(pair[0])
+            peserta_kompetisi.remove(pair[1])
+        
+        context['juara_3_pairs'] = juara_3_pairs
+    
+
+    
     return render(request, 'pertandingan_umpire.html', context)
 
 def hasil_pertandingan_view():

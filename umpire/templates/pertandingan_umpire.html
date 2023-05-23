@@ -193,15 +193,15 @@
                                             },
                                             body: formBodyPesertaGame
                                         })
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            let url = "{% url 'umpire:next_match_data_view' babak='babak' tanggal='tanggal' event_name='event_name' waktu_mulai='waktu_mulai' %}";
-                                            url = url.replace('babak', "{{ babak }}");
-                                            url = url.replace('tanggal', "{{ tanggal }}");
-                                            url = url.replace('event_name', "{{ event_data.0 }}");
-                                            url = url.replace('waktu_mulai', "{{ starting_time }}");
-                                            window.location.href = url;
-                                        });
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                let url = "{% url 'umpire:next_match_data_view' babak='babak' tanggal='tanggal' event_name='event_name' waktu_mulai='waktu_mulai' %}";
+                                                url = url.replace('babak', "{{ babak }}");
+                                                url = url.replace('tanggal', "{{ tanggal }}");
+                                                url = url.replace('event_name', "{{ event_data.0 }}");
+                                                url = url.replace('waktu_mulai', "{{ starting_time }}");
+                                                window.location.href = url;
+                                            });
                                     });
                             })
                             .then(response => response.json())
@@ -224,6 +224,115 @@
                 formBody.push(encodedKey + "=" + encodedValue);
             }
             return formBody.join("&");
+        }
+
+        if (document.querySelectorAll('#juara-3-match tr') != null) {
+            document.getElementById('nextButton').addEventListener('click', function () {
+                const stopwatchElement = document.getElementById('stopwatch');
+                const stopwatchValue = stopwatchElement.textContent;
+                const tableRows = document.querySelectorAll('#juara-3-match tr');
+                // push match data
+                const dataMatch = {
+                    jenis_babak: "Juara 3",
+                    tanggal: "{{ tanggal }}",
+                    waktu_mulai: '{{ starting_time }}',
+                    total_durasi: Math.floor(convertDurationToMinutes(stopwatchValue) / 60),
+                    nama_event: "{{ event_data.0 }}",
+                    tahun_event: "{{ event_data.1 }}",
+                    id_umpire: "190b1182-5174-4780-bd19-ce81b402e4dd"
+                };
+                const formBodyMatch = getFormBody(dataMatch);
+
+                fetch("{% url 'umpire:insert_match' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                    },
+                    body: formBodyMatch
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        tableRows.forEach((row, index) => {
+                            const uniqueInteger = Date.now() % 100000;
+                            const cells = row.getElementsByTagName('td');
+                            const tim1 = cells[0].textContent.trim();
+                            const tim2 = cells[1].textContent.trim();
+                            const skorTim1 = cells[4].textContent.trim();
+                            const skorTim2 = cells[5].textContent.trim();
+                            const skorTim1Value = convertSkorValue(skorTim1);
+                            const skorTim2Value = convertSkorValue(skorTim2);
+
+
+
+                            // push game data
+                            const dataGame = {
+                                "No_Game": uniqueInteger,
+                                "Durasi": Math.floor(convertDurationToMinutes(stopwatchValue) / 60),
+                                "Jenis_Babak": "Juara 3",
+                                "Tanggal": "{{ tanggal }}",
+                                "Waktu_Mulai": '{{ starting_time }}'
+                            };
+                            const formBodyGame = getFormBody(dataGame);
+
+                            return fetch("{% url 'umpire:insert_game' %}", {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                                },
+                                body: formBodyGame
+                            }).then(response => response.json())
+                                .then(data => {
+                                    // push peserta match data
+                                    const dataPesertaMatch = {
+                                        "Jenis_Babak": "Juara 3",
+                                        "Tanggal": "{{ tanggal }}",
+                                        "Waktu_Mulai": '{{ starting_time }}',
+                                        "Nomor_Peserta1": tim1.toString(),
+                                        "Nomor_Peserta2": tim2.toString(),
+                                        "Status_Menang1": skorTim1Value > skorTim2Value ? "True" : "False",
+                                        "Status_Menang2": skorTim1Value < skorTim2Value ? "True" : "False",
+                                    }
+                                    const formBodyPesertaMatch = getFormBody(dataPesertaMatch);
+
+                                    return fetch("{% url 'umpire:insert_peserta_match' %}", {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                                        },
+                                        body: formBodyPesertaMatch
+                                    })
+                                        .then(data => {
+                                            // push peserta game data
+                                            const dataPesertaGame = {
+                                                "No_Game": uniqueInteger,
+                                                "Tim1": tim1.toString(),
+                                                "Tim2": tim2.toString(),
+                                                "SkorTim1": skorTim1Value,
+                                                "SkorTim2": skorTim2Value
+                                            };
+                                            const formBodyPesertaGame = getFormBody(dataPesertaGame);
+
+                                            return fetch("{% url 'umpire:insert_peserta_game' %}", {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+                                                },
+                                                body: formBodyPesertaGame
+                                            })
+                                                .then(response => response.json());
+                                        });
+                                })
+                                .then(response => response.json())
+
+                                .then(response => response.json())
+                                .then(data => console.log(data))
+                                .catch((error) => {
+                                    console.error('Error:', error);
+                                });;
+                        })
+
+                    });
+            });
         }
 
 
@@ -263,7 +372,8 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody id="main-match" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                        <tbody id="juara-3-match"
+                            class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                             {% for game in juara_3_pairs %}
                             <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                                 <td
@@ -335,7 +445,8 @@
                                 </th>
                             </tr>
                         </thead>
-                        <tbody id="main-match" class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                        <tbody id="main-match"
+                            class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                             {% for game in match_data %}
                             <tr class="hover:bg-gray-100 dark:hover:bg-gray-700">
                                 <td

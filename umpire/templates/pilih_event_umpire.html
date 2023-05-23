@@ -5,53 +5,71 @@
 
 <div class="text-center font-bold flex flex-col" id="content">
 
-  <h1 class="my-10 font-bold text-4xl">Daftar Event</h1>
-  <div class="relative overflow-x-auto mx-24">
-    <table class="w-full text-sm text-left ">
-        <thead class="text-xs bg-red-400 text-white">
-            <tr>
-                <th scope="col" class="px-6 py-3">
-                    Nama Event
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Total Hadiah
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Tanggal Mulai
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Kategori
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-          {% if events %}
-            {% for event in events %}
-            <tr class="bg-red-200 border-b">
-                <th scope="row" class="px-6 py-4 whitespace-nowrap">
-                  {{ event.0 }} 
-                </th>
-                <td class="px-6 py-4 font-medium">
-                    Rp {{ event.7 }}
-                </td>
-                <td class="px-6 py-4 font-medium">
-                    {{ event.4 }}
-                </td>
-                <td class="px-6 py-4 font-medium">
-                    {{ event.6 }}
-                </td>
-                <td class="px-6 py-4 font-medium">
-                    <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
-                        <a href="{% url 'umpire:partai_kompetisi' event_name='All England Open'%}">Pilih</a>
-                    </div>
-              </td>
-            </tr>
-            {% endfor %}
-          {% endif %}
-        </tbody>
-    </table>
-  </div>
+    <h1 class="my-10 font-bold text-4xl">Daftar Event</h1>
+    <div class="relative overflow-x-auto mx-24">
+        <table class="w-full text-sm text-left ">
+            <thead class="text-xs bg-red-400 text-white">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Nama Event
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Total Hadiah
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Tanggal Mulai
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Kategori
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if events %}
+                {% for event in events %}
+                <tr class="bg-red-200 border-b">
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                        {{ event.0 }}
+                    </th>
+                    <td class="px-6 py-4 font-medium">
+                        Rp {{ event.7 }}
+                    </td>
+                    <td class="px-6 py-4 font-medium">
+                        {{ event.4 }}
+                    </td>
+                    <td class="px-6 py-4 font-medium">
+                        {{ event.6 }}
+                    </td>
+                    <td class="px-6 py-4 font-medium">
+                        <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                            <a class="my-link" href="#" event_name="{{ event.0 }}"
+                                data-url="{% url 'umpire:partai_kompetisi' event_name='event_name' %}">Pilih</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+
+            </tbody>
+        </table>
+    </div>
 </div>
+
+<script>
+window.onload = function() {
+    var links = document.getElementsByClassName('my-link');
+    for(var i = 0; i < links.length; i++) {
+        links[i].addEventListener('click', function(event){
+            event.preventDefault();
+            let url = this.getAttribute('data-url');
+            url = url.replace('event_name', this.getAttribute('event_name'));
+            window.location.href = url;
+        });
+    }
+};
+
+
+</script>
 
 {% endblock content %}

@@ -5,7 +5,7 @@
 
 <div class="text-center font-bold flex flex-col" id="content">
 
-  <h1 class="my-10 font-bold text-4xl">Daftar Event</h1>
+  <h1 class="my-10 font-bold text-4xl">Daftar Stadium</h1>
   <div class="relative overflow-x-auto mx-24">
     <table class="w-full text-sm text-left ">
         <thead class="text-xs bg-red-400 text-white">
@@ -37,7 +37,7 @@
                 </td>
                 <td class="px-6 py-4 font-medium">
                   <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
-                    <a href="{% url 'atlet:show_pilih_event' stadium='State Arena' %}">Pilih</a>
+                    <a href="{% url 'atlet:show_pilih_event' stadium=stadium.nama %}">Pilih</a>
                   </div>
               </td>
             </tr>

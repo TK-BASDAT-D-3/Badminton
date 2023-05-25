@@ -1,50 +1,52 @@
 {% extends "base.html" %} {% block meta %}
-<title>Badminton | Daftar Event</title>
+<title>Badminton | List Ujian Kualifikasi</title>
 {% endblock meta %} {% block content %}
 
 
 <div class="text-center font-bold flex flex-col" id="content">
 
-  <h1 class="my-10 font-bold text-4xl">Daftar Event</h1>
+  <h1 class="my-10 font-bold text-4xl">List Ujian Kualifikasi</h1>
   <div class="relative overflow-x-auto mx-24">
     <table class="w-full text-sm text-left ">
         <thead class="text-xs bg-red-400 text-white">
             <tr>
                 <th scope="col" class="px-6 py-3">
-                    Nama Event
+                    Tahun
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Total Hadiah
+                    Batch
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Tanggal Mulai
+                    Tempat Pelaksanaan
                 </th>
                 <th scope="col" class="px-6 py-3">
-                    Kategori
+                    Tanggal Pelaksanaan
                 </th>
-                <th></th>
+                <th scope="col" class="px-6 py-3">
+                    Action
+                </th>
             </tr>
         </thead>
         <tbody>
-          {% if events %}
-            {% for event in events %}
+          {% if ujians %}
+            {% for ujian in ujians %}
             <tr class="bg-red-200 border-b">
-                <th scope="row" class="px-6 py-4 whitespace-nowrap">
-                  {{ event.nama_event }} 
-                </th>
                 <td class="px-6 py-4 font-medium">
-                    Rp {{ event.total_hadiah }}
+                    {{ ujian.tahun }}
                 </td>
                 <td class="px-6 py-4 font-medium">
-                    {{ event.tgl_mulai }}
+                    {{ ujian.batch }}
                 </td>
                 <td class="px-6 py-4 font-medium">
-                    {{ event.kategori_superseries }}
+                    {{ ujian.tempat }}
                 </td>
                 <td class="px-6 py-4 font-medium">
-                    <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
-                        <a href="{% url 'atlet:show_pilih_kategori' stadium=stadium event=event.nama_event%}">Pilih</a>
-                    </div>
+                    {{ ujian.tanggal }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                  <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                    <a href="{% url 'main:tes_ujian_kualifikasi' tahun=ujian.tahun batch=ujian.batch tempat=ujian.tempat tanggal=ujian.tanggal %}">Ikuti</a>
+                  </div>
               </td>
             </tr>
             {% endfor %}
@@ -53,5 +55,6 @@
     </table>
   </div>
 </div>
+
 
 {% endblock content %}

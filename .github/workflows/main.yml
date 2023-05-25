@@ -1,0 +1,40 @@
+name: Deploy Docker Container
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.2
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Build and publish Docker image
+      run: |
+        docker build -t badudu-image .
+        docker tag badudu-image haggy24/badudu-image:latest
+        echo ${{ secrets.DOCKER_PASSWORD }}| docker login -u haggy24 --password-stdin 
+        docker push haggy24/badudu-image:latest
+
+    - name: Connect via SSH and execute Docker image
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          docker stop badudu-container || true
+          docker rm badudu-container || true
+          docker rmi haggy24/badudu-image:latest || true
+          docker pull haggy24/badudu-image:latest
+          docker run -d --name badudu-container -p 80:8000 haggy24/badudu-image:latest
+

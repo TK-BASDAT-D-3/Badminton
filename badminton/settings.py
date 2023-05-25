@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "atlet",
     "main",
     "authentication",
+    "umpire",
 ]
 
 MIDDLEWARE = [
@@ -89,7 +90,7 @@ DATABASES = {
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'jAXB-tvd-YSQW9-',
-        'HOST': "db.bmvlksjktugdlklxwsnk.supabase.co",
+        'HOST': 'db.bmvlksjktugdlklxwsnk.supabase.co',
         'PORT': '5432',
     }
 }

@@ -1,0 +1,152 @@
+{% extends "base.html" %} {% block meta %}
+<title>Badminton | Daftar Event</title>
+{% endblock meta %} {% block content %}
+
+
+
+<div class="flex flex-col" id="content">
+
+    <h1 class="text-center my-10 font-bold text-4xl">List Partai Kompetisi</h1>
+    <div class="relative overflow-x-auto mx-24">
+        {% if event %}
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col" class=""></th>
+                    <th scope="col" class=""></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Event</td>
+                    <td>: {{ event.0 }}</td>
+                </tr>
+                <tr>
+                    <td>Hadiah</td>
+                    <td>: Rp {{ event.7 }}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Mulai</td>
+                    <td>: {{ event.4 }}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal Selesai</td>
+                    <td>: {{ event.5 }}</td>
+                </tr>
+                <tr>
+                    <td>Kategori</td>
+                    <td>: {{ event.6 }}</td>
+                </tr>
+                <tr>
+                    <td>Kapasitas</td>
+                    <td>: {{ event.7 }}</td>
+                </tr>
+                <tr>
+                    <td>Stadium</td>
+                    <td>: {{ event.2 }}</td>
+                </tr>
+                <tr>
+                    <td>Negara</td>
+                    <td>: {{ event.3 }}</td>
+                </tr>
+            </tbody>
+        </table>
+        {% endif%}
+
+
+        <table class="w-full text-sm text-left mt-4">
+            <thead class="text-xs bg-red-400 text-center text-white">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        Kategori
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <tr class="bg-red-200 border-b">
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                        Tunggal Putri
+                    </th>
+                    <td class="px-6 py-4 font-medium">
+                        <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                            <a href="{% url 'umpire:match_data_view' event_name='Open' babak='Final'  %}" class="ajax-link">Mulai</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="bg-red-200 border-b">
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                        Ganda Putri
+                    </th>
+                    <td class="px-6 py-4 font-medium">
+                        <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                            <a
+                                href="{% url 'umpire:match_data_view' event_name='Open' babak='Semifinal'  %}" class="ajax-link">Mulai</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="bg-red-200 border-b">
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                        Ganda Campuran
+                    </th>
+                    <td class="px-6 py-4 font-medium">
+                        <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                            <a
+                                href="{% url 'umpire:match_data_view' event_name='Open' babak='Semifinal'  %}" class="ajax-link">Mulai</a>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr class="bg-red-200 border-b">
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                        Tunggal Putra
+                    </th>
+                    <td class="px-6 py-4 font-medium">
+                        <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                            <a
+                                href="{% url 'umpire:match_data_view' event_name='Open' babak='Semifinal'  %}" class="ajax-link">Mulai</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="bg-red-200 border-b">
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                        Ganda Putra
+                    </th>
+                    <td class="px-6 py-4 font-medium">
+                        <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                            <a
+                                href="{% url 'umpire:match_data_view' event_name='Open' babak='Semifinal'  %}" class="ajax-link">Mulai</a>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="bg-red-200 border-b">
+                    <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                        Ganda Campuran
+                    </th>
+                    <td class="px-6 py-4 font-medium">
+                        <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                            <a
+                                href="{% url 'umpire:match_data_view' event_name='Open' babak='Semifinal'  %}" class="ajax-link">Mulai</a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.ajax-link').click(function (event) {
+            event.preventDefault(); // Prevent the default link behavior
+
+            var url = $(this).attr('href');
+            url = url.replace('Open', '{{ event.0 }}');
+            console.log(url);
+
+            window.location.href = url;
+        });
+    });
+</script>
+
+{% endblock content %}

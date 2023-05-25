@@ -1,24 +1,17 @@
+{% extends "base.html" %}
+
+{% block meta %}
+  <title>Badminton | R LIST EVENT</title>
+{% endblock meta %}
+
+{% block content %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>List Event (Umpire)</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-    }
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #fff;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    }
-    h1 {
-      text-align: center;
-    }
     table {
       border-collapse: collapse;
       width: 100%;
@@ -52,7 +45,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>List Event (Umpire)</h1>
+    <h1 class="text-center font-bold text-4xl my-10">List Event (Umpire)</h1>
     <table>
       <thead>
         <tr>
@@ -96,3 +89,5 @@
   </div>
 </body>
 </html>
+
+{% endblock content %}

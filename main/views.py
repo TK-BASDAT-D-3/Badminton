@@ -13,6 +13,43 @@ def show_register(request):
     return render(request, 'register.html', {})
 
 
+def register_atlet(request):
+    if request.method == 'POST':
+        # Get the data from the form
+        name = request.POST.get('nama')
+        email = request.POST.get('email')
+        country = request.POST.get('negara')
+        birth_date = request.POST.get('tanggal_lahir')
+        play = request.POST.get('play')
+        height = request.POST.get('tinggi_badan')
+        gender = request.POST.get('jenis_kelamin')
+
+        # TODO: Implement logic to handle the data, i.e. store in database
+
+        return JsonResponse({'status': 'success'})
+    
+    return render(request, 'register_atlet.html')
+
+def register_umpire(request):
+    if request.method == 'POST':
+        name = request.POST.get('nama')
+        email = request.POST.get('email')
+        country = request.POST.get('negara')
+
+        return JsonResponse({'status': 'success'})
+    return render(request, 'register_umpire.html')
+
+def register_pelatih(request):
+    if request.method == 'POST':
+        name = request.POST.get('nama')
+        email = request.POST.get('email')
+        country = request.POST.get('negara')
+        categories = request.POST.getlist('kategori[]')
+        start_date = request.POST.get('tanggal_mulai')
+
+        return JsonResponse({'status': 'success'})
+    return render(request, 'register_pelatih.html')
+
 def show_login(request):
     return render(request, 'login.html', {})
 

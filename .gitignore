@@ -49,5 +49,5 @@
 # Ignore other project-specific files and directories
 *.bak
 *.backup
-*.sql
 *.ini
+.DS_Store

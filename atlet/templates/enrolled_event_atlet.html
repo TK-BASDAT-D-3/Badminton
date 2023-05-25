@@ -1,0 +1,52 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+<div class="">
+  {% if events %} {% for event in events %}
+  <div
+    class="max-w-sm max-h-max grid grid-cols-1 mr-5 bg-red-200 rounded border-4 border-neutral-500 p-5 m-1"
+  >
+    <div>
+      <div>
+        <p class="text-3xl font-bold">{{ event.0 }}</p>
+        <p class="text-xl">Superseries {{ event.3 }}</p>
+        <p class="text-xl">{{ event.1 }}</p>
+      </div>
+
+      <div class="text-left mt-5">
+        <p class="">📅 {{ event.4 }} - {{ event.5 }}</p>
+        <p class="">📍 {{ event.2 }}</p>
+      </div>
+      {% csrf_token %}
+      <div
+        class="mt-5 bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center"
+      >
+        <button class="delete-btn" data-event-id="{{ event.id }}">
+          Unenrolled
+        </button>
+      </div>
+    </div>
+  </div>
+  {% endfor %} {% endif %}
+</div>
+
+<script>
+  const deleteButtons = document.getElementsByClassName("delete-btn");
+  Array.from(deleteButtons).forEach((button) => {
+    button.addEventListener("click", () => {
+      fetch(`/atlet/un-enrolled-event`, {
+        method: "DELETE",
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log(`Event with ID deleted successfully.`);
+          } else {
+            console.error("Failed to delete the event.");
+          }
+        })
+        .catch((error) => {
+          console.error("Error occurred while deleting the event:", error);
+        });
+    });
+  });
+</script>
+
+{% endblock content %}

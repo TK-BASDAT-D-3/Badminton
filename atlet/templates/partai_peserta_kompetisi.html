@@ -1,0 +1,28 @@
+{% extends "base.html" %} {% load static %} {% block meta %} {% endblock meta %}
+{% block content %}
+
+<div class="flex flex-col">
+  {% if partai %} {% for i in partai %}
+  <div class="flex flex-row">
+    <h1 class="my-10 font-bold text-xl">jenis_partai</h1>
+    <h1 class="my-10 font-bold text-xl">nama_event</h1>
+    <h1 class="my-10 font-bold text-xl">tahun_event</h1>
+    <h1 class="my-10 font-bold text-xl">nama_stadium</h1>
+    <h1 class="my-10 font-bold text-xl">kategori_superseries</h1>
+    <h1 class="my-10 font-bold text-xl">tgl_mulai</h1>
+    <h1 class="my-10 font-bold text-xl">tgl_selesai</h1>
+  </div>
+  <div class="flex flex-row gap-5">
+    <h1 class="my-10 font-bold text-xl">{{i.0 }}</h1>
+    <h1 class="my-10 font-bold text-xl">{{i.1 }}</h1>
+    <h1 class="my-10 font-bold text-xl">{{i.2 }}</h1>
+    <h1 class="my-10 font-bold text-xl">{{i.3 }}</h1>
+    <h1 class="my-10 font-bold text-xl">{{i.4 }}</h1>
+    <h1 class="my-10 font-bold text-xl">{{i.5 }}</h1>
+    <h1 class="my-10 font-bold text-xl">{{i.6 }}</h1>
+  </div>
+
+  {% endfor %} {% endif %}
+</div>
+
+{% endblock content %}

@@ -2,18 +2,12 @@
 <title>Badminton | Register Umpire</title>
 {% endblock meta %} {% block content %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Form Registrasi Umpire</title>
-
-</head>
 <body>
   <div class="container">
     <h1 class="text-center font-bold text-4xl my-10">Form Registrasi Umpire</h1>
     <div class="grid grid-cols-1 gap-5 bg-white rounded-lg shadow-md p-5 m-auto">
-      <form class="flex flex-col justify-center" action="" method="post">
+      <form id="form-umpire" class="flex flex-col justify-center" action="" method="post">
+        {% csrf_token %}
         <label for="nama" class="block font-bold mb-2">Nama:</label>
         <input type="text" id="nama" name="nama" required class="w-full py-2 px-4 mb-5 border border-gray-300 rounded-lg">
       
@@ -27,7 +21,21 @@
       </form>
     </div>
   </div>
-</body>
-</html>
+  <script>
+    document.getElementById('form-umpire').addEventListener('submit', (event) => {
+      event.preventDefault();
+  
+      var nama = document.getElementById('nama').value;
+      var email = document.getElementById('email').value;
+      var negara = document.getElementById('negara').value;
+  
+      console.log(nama, email, negara);
+  
+      window.location.assign(`/register/umpire/${nama}/${email}/${negara}`);
+    })
+  
+  
+  </script>
+
 
 {% endblock content %}

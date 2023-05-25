@@ -1,4 +1,39 @@
+import uuid
 from django.db import connection
+
+def insert_atlet(nama, email,negara,tanggal_lahir,play,tinggi_badan,jenis_kelamin):
+    with connection.cursor() as cursor:
+        id = uuid.uuid4()
+        search_path = "badudu"
+        cursor.execute(f"SET search_path TO {search_path}")
+        cursor.execute("""
+            INSERT INTO member (id, nama, email) 
+            VALUES (%s, %s, %s)
+        """, [id, nama, email])
+
+        cursor.execute("""
+            INSERT INTO atlet (id, tgl_lahir, negara_asal, play_right, height, world_rank, jenis_kelamin) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, [id, tanggal_lahir, negara, play, tinggi_badan, None, jenis_kelamin])
+
+def insert_pelatih(request, nama, email,negara,tanggal_lahir,play,tinggi_badan,jenis_kelamin):
+    pass
+
+def insert_umpire(nama, email, negara):
+    with connection.cursor() as cursor:
+        id = uuid.uuid4()
+        search_path = "badudu"
+        cursor.execute(f"SET search_path TO {search_path}")
+        cursor.execute("""
+            INSERT INTO member (id, nama, email) 
+            VALUES (%s, %s, %s)
+        """, [id, nama, email])
+
+        cursor.execute("""
+            INSERT INTO umpire (id, negara) 
+            VALUES (%s, %s)
+        """, [id, negara])
+
 
 def get_list_ujian_kualifikasi():
     data = {'ujians':[]}

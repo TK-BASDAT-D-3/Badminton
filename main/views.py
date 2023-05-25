@@ -12,6 +12,28 @@ def show_landing(request):
 def show_register(request):
     return render(request, 'register.html', {})
 
+def show_register_atlet(request):
+    return render(request, 'register_atlet.html', {})
+
+def add_atlet(request, nama, email,negara,tanggal_lahir,play,tinggi_badan,jenis_kelamin):
+    insert_atlet(nama, email,negara,tanggal_lahir,play,tinggi_badan,jenis_kelamin)
+    return render(request, "login.html")
+
+
+def show_register_pelatih(request):
+    return render(request, 'register_pelatih.html', {})
+
+def add_pelatih(request, nama, email,negara,tanggal_lahir,play,tinggi_badan,jenis_kelamin):
+    insert_pelatih(nama, email,negara,tanggal_lahir,play,tinggi_badan,jenis_kelamin)
+    return render(request, "login.html")
+
+def show_register_umpire(request):
+    return render(request, 'register_umpire.html', {})
+
+def add_umpire(request, nama, email,negara):
+    insert_umpire(nama, email, negara)
+    return render(request, "login.html")
+
 
 def show_login(request):
     return render(request, 'login.html', {})

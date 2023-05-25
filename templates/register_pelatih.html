@@ -10,6 +10,7 @@
   <div class="flex justify-center">
     <div class="grid grid-cols-1 gap-5 bg-white rounded-lg shadow-md p-5 m-auto">
       <form action="" methox="post" class="flex flex-col justify-center">
+        {% csrf_token %}
         <label for="nama" class="block font-bold mb-2">Nama:</label>
         <input type="text" id="nama" name="nama" required
           class="w-full py-2 px-4 mb-5 border border-gray-300 rounded-lg">

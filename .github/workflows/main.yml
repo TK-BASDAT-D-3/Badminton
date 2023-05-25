@@ -32,10 +32,9 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          ssh -tt -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << EOF
-            docker stop badudu-container || true
-            docker rm badudu-container || true
-            docker rmi haggy24/badudu-image:latest || true
-            docker pull haggy24/badudu-image:latest
-            docker run -d --name badudu-container -p 80:8000 haggy24/badudu-image:latest
-          EOF
+          docker stop badudu-container || true
+          docker rm badudu-container || true
+          docker rmi haggy24/badudu-image:latest || true
+          docker pull haggy24/badudu-image:latest
+          docker run -d --name badudu-container -p 80:8000 haggy24/badudu-image:latest
+

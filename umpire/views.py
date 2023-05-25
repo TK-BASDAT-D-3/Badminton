@@ -231,3 +231,8 @@ def login(request):
             return JsonResponse({"status": "fail"}, status=400)
         
     return render(request, 'login.html')
+
+from django.shortcuts import redirect
+def logout(request):
+    request.session.flush()
+    return redirect('/umpire/login/')

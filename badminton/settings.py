@@ -87,10 +87,10 @@ WSGI_APPLICATION = 'badminton.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'tk3-5',
+        'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
+        'PASSWORD': 'jAXB-tvd-YSQW9-',
+        'HOST': 'db.bmvlksjktugdlklxwsnk.supabase.co',
         'PORT': '5432',
     }
 }

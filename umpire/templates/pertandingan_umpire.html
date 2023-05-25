@@ -21,7 +21,11 @@
                 seconds = seconds.toString().padStart(2, '0');
 
                 var stopwatchText = '[' + minutes + ':' + seconds + ']';
-                document.getElementById('stopwatch').textContent = stopwatchText;
+                if (document.getElementById('stopwatch1') != null)
+                    document.getElementById('stopwatch1').textContent = stopwatchText;
+
+                document.getElementById('stopwatch2').textContent = stopwatchText;
+
 
                 timer = setTimeout(updateStopwatch, 1000); // Update every 10 milliseconds
             }
@@ -53,7 +57,7 @@
                 value--;
 
                 // Update the value element with the new value
-                valueElement.textContent = value;
+                valueElement.textContent = " " + value + " ";
             });
         });
 
@@ -73,7 +77,7 @@
                 value++;
 
                 // Update the value element with the new value
-                valueElement.textContent = value;
+                valueElement.textContent = " " + value + " ";
             });
         });
 
@@ -102,7 +106,7 @@
         }
 
         document.getElementById('nextButton').addEventListener('click', function () {
-            const stopwatchElement = document.getElementById('stopwatch');
+            const stopwatchElement = document.getElementById('stopwatch2');
             const stopwatchValue = stopwatchElement.textContent;
             const tableRows = document.querySelectorAll('#main-match tr');
             // push match data
@@ -228,7 +232,7 @@
 
         if (document.querySelectorAll('#juara-3-match tr') != null) {
             document.getElementById('nextButton').addEventListener('click', function () {
-                const stopwatchElement = document.getElementById('stopwatch');
+                const stopwatchElement = document.getElementById('stopwatch1');
                 const stopwatchValue = stopwatchElement.textContent;
                 const tableRows = document.querySelectorAll('#juara-3-match tr');
                 // push match data
@@ -347,7 +351,7 @@
         <div class="overflow-x-auto shadow-md sm:rounded-lg">
             <div class="p-4 text-center">
                 <h1>PERTANDINGAN JUARA 3</h1>
-                <h1 id="stopwatch">[00:00]</h1>
+                <h1 id="stopwatch1">[00:00]</h1>
             </div>
             <div class="inline-block min-w-full align-middle">
                 <div class="overflow-hidden">
@@ -394,7 +398,7 @@
                                 </td>
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    <button class="minus-button">[-]</button> 1 <button class="plus-button">[+]</button>
+                                    <button class="minus-button">[-]</button> 0 <button class="plus-button">[+]</button>
                                 </td>
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -420,7 +424,7 @@
         <div class="overflow-x-auto shadow-md sm:rounded-lg">
             <div class="p-4 text-center">
                 <h1>PERTANDINGAN {{ babak }}</h1>
-                <h1 id="stopwatch">[00:00]</h1>
+                <h1 id="stopwatch2">[00:00]</h1>
             </div>
             <div class="inline-block min-w-full align-middle">
                 <div class="overflow-hidden">
@@ -467,7 +471,7 @@
                                 </td>
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                    <button class="minus-button">[-]</button> 1 <button class="plus-button">[+]</button>
+                                    <button class="minus-button">[-]</button> 0 <button class="plus-button">[+]</button>
                                 </td>
                                 <td
                                     class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">

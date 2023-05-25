@@ -16,38 +16,40 @@
             </tr>
         </thead>
         <tbody>
+            {% for event in event %}
             <tr>
-                <td>Event</td>
+                <td>Event {{event.a}}</td>
                 <td>: {{ event.nama_event }}</td>
             </tr>
             <tr>
                 <td>Hadiah</td>
-                <td>: Rp {{ event.hadiah }}</td>
+                <td>: Rp {{ event.total_hadiah }}</td>
             </tr>
             <tr>
                 <td>Tanggal Mulai</td>
-                <td>: {{ event.tanggal_mulai }}</td>
+                <td>: {{ event.tgl_mulai }}</td>
             </tr>
             <tr>
                 <td>Tanggal Selesai</td>
-                <td>: {{ event.tanggal_selesai }}</td>
+                <td>: {{ event.tgl_selesai }}</td>
             </tr>
             <tr>
                 <td>Kategori</td>
-                <td>: {{ event.superseries }}</td>
+                <td>: {{ event.kategori_superseries }}</td>
             </tr>
             <tr>
                 <td>Kapasitas</td>
-                <td>: {{ event.kapasitas }}</td>
+                <td>: {{ event.kapasitas }} orang atau pasangan / partai</td>
             </tr>
             <tr>
                 <td>Stadium</td>
-                <td>: {{ event.stadium }}</td>
+                <td>: {{ event.nama }}</td>
             </tr>
             <tr>
                 <td>Negara</td>
                 <td>: {{ event.negara }}</td>
             </tr>
+            {% endfor %}
         </tbody>
     </table>
     {% endif%}
@@ -62,12 +64,16 @@
                 <th scope="col" class="px-6 py-3">
                     Partner
                 </th>
+                <th scope="col" class="px-6 py-3">
+                    Kapasitas
+                </th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
             {% if sex == "woman" %}
-                
+                <form method="POST" action="{% url 'atlet:create_atlet_ganda' %}">
+                    {% csrf_token %}
                 <tr class="bg-red-200 border-b">
                     <th scope="row" class="px-6 py-4 whitespace-nowrap">
                         Tunggal Putri
@@ -75,51 +81,78 @@
                     <td class="px-6 py-4 text-center font-medium">
                         -
                     </td>
+                    <td class="px-6 py-4 text-center font-medium">
+                        {% if jumlah_peserta %}
+                            {{ jumlah_peserta.ws}}/{{kapasitas.kapasitas}}
+                        {% else %}
+                            0/{{kapasitas.kapasitas}}
+                        {% endif %}
+                    </td>
                     <td class="px-6 py-4 font-medium">
                         <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
-                            <a href="{% url 'atlet:show_enrolled_event' %}">Pilih</a>
+                            <!-- <a href="{% url 'atlet:create_atlet_ganda' %}">Pilih</a> -->
+                            <input type="submit" value="Submit"/>
                         </div>
                     </td>
                 </tr>
+                </form>
+                <form method="POST" action="{% url 'atlet:create_atlet_ganda' %}">
+                    {% csrf_token %}
                 <tr class="bg-red-200 border-b">
                     <th scope="row" class="px-6 py-4 whitespace-nowrap">
                         Ganda Putri
                     </th>
                     <td class="px-6 py-4 font-medium">
-                        <select 
+                        <select name ="atlet_register"
                             class="form-control rounded border-2  hover:border-neutral-900 text-center">
                                 <option value="" disabled selected hidden>Pilih partner</option>
-                            {% if women %}
-                                {% for woman in women %}
-                                    <option value="{{ woman }}">{{ woman }}</option>
-                                {% endfor %}
-                            {% endif %}
+                                {% if women %}
+                                    {% for woman in women %}
+                                        <option value="{{ woman.id }}" name="atlet_register">{{ woman.nama }}</option>
+                                    {% endfor %}
+                                {% endif %}
                         </select>
+                    </td>
+                    <td class="px-6 py-4 text-center font-medium">
+                        {% if jumlah_peserta %}
+                            {{ jumlah_peserta.wd}}/{{kapasitas.kapasitas}}
+                        {% else %}
+                            0/{{kapasitas.kapasitas}}
+                        {% endif %}
                     </td>
                     <td class="px-6 py-4 font-medium">
                         <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
-                            <a href="{% url 'atlet:show_enrolled_event' %}">Pilih</a>
+                            <!-- <a href="{% url 'atlet:create_atlet_ganda' %}">Pilih</a> -->
+                            <input type="submit" value="Submit"/>
                         </div>
                     </td>
                 </tr>
+                </form>
                 <tr class="bg-red-200 border-b">
                     <th scope="row" class="px-6 py-4 whitespace-nowrap">
                         Ganda Campuran
                     </th>
                     <td class="px-6 py-4 font-medium">
-                        <select 
+                        <select name ="atlet_register"
                             class="form-control rounded border-2  hover:border-neutral-900 text-center">
                                 <option value="" disabled selected hidden>Pilih partner</option>
-                            {% if men %}
-                                {% for man in men %}
-                                    <option value="{{ man }}">{{ man }}</option>
-                                {% endfor %}
-                            {% endif %}
+                                {% if both %}
+                                    {% for people in both %}
+                                        <option value="{{ people.id }}">{{ people.nama }}</option>
+                                    {% endfor %}
+                                {% endif %}
                         </select>
+                    </td>
+                    <td class="px-6 py-4 text-center font-medium">
+                        {% if jumlah_peserta %}
+                            {{ jumlah_peserta.xd}}/{{kapasitas.kapasitas}}
+                        {% else %}
+                            0/{{kapasitas.kapasitas}}
+                        {% endif %}
                     </td>
                     <td class="px-6 py-4 font-medium">
                         <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
-                            <a href="{% url 'atlet:show_enrolled_event' %}">Pilih</a>
+                            <a href="{% url 'atlet:create_atlet_ganda' %}">Pilih</a>
                         </div>
                     </td>
                 </tr>
@@ -132,9 +165,16 @@
                     <td class="text-center px-6 py-4 font-medium">
                         -
                     </td>
+                    <td class="px-6 py-4 text-center font-medium">
+                        {% if jumlah_peserta %}
+                            {{ jumlah_peserta.ms}}/{{kapasitas.kapasitas}}
+                        {% else %}
+                            0/{{kapasitas.kapasitas}}
+                        {% endif %}
+                    </td>
                     <td class="px-6 py-4 font-medium">
                         <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
-                            <a href="{% url 'atlet:show_enrolled_event' %}">Pilih</a>
+                            <a href="{% url 'atlet:create_atlet_ganda' %}">Pilih</a>
                         </div>
                     </td>
                 </tr>
@@ -143,19 +183,26 @@
                         Ganda Putra
                     </th>
                     <td class="px-6 py-4 font-medium">
-                        <select 
+                        <select name ="atlet_register"
                             class="form-control rounded border-2  hover:border-neutral-900 text-center">
                                 <option value="" disabled selected hidden>Pilih partner</option>
-                            {% if men %}
-                                {% for man in men %}
-                                    <option value="{{ man }}">{{ man }}</option>
-                                {% endfor %}
-                            {% endif %}
+                                {% if men %}
+                                    {% for man in men %}
+                                        <option value="{{ man.id }}">{{ man.nama }}</option>
+                                    {% endfor %}
+                                {% endif %}
                         </select>
+                    </td>
+                    <td class="px-6 py-4 text-center font-medium">
+                        {% if jumlah_peserta %}
+                            {{ jumlah_peserta.md}}/{{kapasitas.kapasitas}}
+                        {% else %}
+                            0/{{kapasitas.kapasitas}}
+                        {% endif %}
                     </td>
                     <td class="px-6 py-4 font-medium">
                         <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
-                            <a href="{% url 'atlet:show_enrolled_event' %}">Pilih</a>
+                            <a href="{% url 'atlet:create_atlet_ganda' %}">Pilih</a>
                         </div>
                     </td>
                 </tr>
@@ -164,19 +211,26 @@
                         Ganda Campuran
                     </th>
                     <td class="px-6 py-4 font-medium">
-                        <select 
+                        <select name ="atlet_register"
                             class="form-control rounded border-2 border-black-500 hover:border-neutral-900 text-center">
                                 <option value="" disabled selected hidden>Pilih partner</option>
-                            {% if women %}
-                                {% for woman in women %}
-                                    <option value="{{ woman }}">{{ woman }}</option>
-                                {% endfor %}
-                            {% endif %}
+                                {% if both %}
+                                    {% for people in both %}
+                                        <option value="{{ people.id }}">{{ people.nama }}</option>
+                                    {% endfor %}
+                                {% endif %}
                         </select>
+                    </td>
+                    <td class="px-6 py-4 text-center font-medium">
+                        {% if jumlah_peserta %}
+                            {{ jumlah_peserta.xd}}/{{kapasitas.kapasitas}}
+                        {% else %}
+                            0/{{kapasitas.kapasitas}}
+                        {% endif %}
                     </td>
                     <td class="px-6 py-4 font-medium">
                         <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
-                            <a href="{% url 'atlet:show_enrolled_event' %}">Pilih</a>
+                            <a href="{% url 'atlet:create_atlet_ganda' %}">Pilih</a>
                         </div>
                     </td>
                 </tr>

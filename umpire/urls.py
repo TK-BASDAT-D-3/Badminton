@@ -14,4 +14,5 @@ urlpatterns = [
     path('insert-peserta-game/', views.insert_peserta_mengikuti_game_view, name='insert_peserta_game'),
     path('insert-peserta-match/', views.insert_peserta_mengikuti_match_view, name='insert_peserta_match'),
     path('login/', views.login, name='login'),
+    path('logout/', views.logout, name='logout'),
 ]

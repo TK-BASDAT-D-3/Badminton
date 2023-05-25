@@ -1,0 +1,151 @@
+{% extends "base.html" %} {% block meta %}
+<title>Badminton | Pertanyaan Kualifikasi</title>
+{% endblock meta %} {% block content %}
+
+<div class="flex flex-col" id="content">
+
+    <h1 class="text-center  my-10 font-bold text-4xl">Pertanyaan Kualifikasi</h1>
+    <div class="row">
+        <div class="mx-auto col-10 col-md-8 col-lg-6">
+            <form id="form-ujian">
+                <p>1. Induk organisasi Bulutangkis seluruh Indonesia adalah</p>
+                <div class="form-check">
+                    <input required class="form-check-input" type="radio" name="radio" id="radio1" value="1">
+                    <label class="form-check-label" for="radio1">
+                        Perbasi
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radio" id="radio2" value="2">
+                    <label class="form-check-label" for="radio2">
+                        PBVSI
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radio" id="radio3" value="3">
+                    <label class="form-check-label" for="radio3">
+                        PBSI
+                    </label>
+                </div>
+                <p>2. Pukulan overhead yang meluncur dekat net dan jatuh di depan lapangan lawan disebut …</p>
+                <div class="form-check">
+                    <input required class="form-check-input" type="radio" name="radio1" id="radio4" value="1">
+                    <label class="form-check-label" for="radio4">
+                        Servis
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radio1" id="radio5" value="2">
+                    <label class="form-check-label" for="radio5">
+                        Netting
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radio1" id="radio6" value="3">
+                    <label class="form-check-label" for="radio6">
+                        Dropshot
+                    </label>
+                </div>
+                <p>3. Underhand disebut pula …</p>
+                <div class="form-check">
+                    <input required class="form-check-input" type="radio" name="radio2" id="radio7" value="1">
+                    <label class="form-check-label" for="radio7">
+                        Pukulan dari samping
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radio2" id="radio8" value="2">
+                    <label class="form-check-label" for="radio8">
+                        Pukulan dari bawah
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radio2" id="radio9" value="3">
+                    <label class="form-check-label" for="radio9">
+                        Pukulan dari atas
+                    </label>
+                </div>
+                <p>4. Jumlah set dalam permainan bulu tangkis adalah....</p>
+                <div class="form-check">
+                    <input required class="form-check-input" type="radio" name="radio3" id="radio10" value="1">
+                    <label class="form-check-label" for="radio10">
+                        2 dan 3 set
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radio3" id="radio11" value="2">
+                    <label class="form-check-label" for="flexRadioDefaul11">
+                        3 dan 4 set
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radio3" id="radio12" value="3">
+                    <label class="form-check-label" for="radio12">
+                        1 dan 3 set
+                    </label>
+                </div>
+                <p>5. Bola dalam permainan bulu tangkis disebut dengan istilah....</p>
+                <div class="form-check">
+                    <input required class="form-check-input" type="radio" name="radio4" id="radio13" value="1">
+                    <label class="form-check-label" for="radio13">
+                        shuttlehands
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radio4" id="radio14" value="2">
+                    <label class="form-check-label" for="radio14">
+                        sticks ball
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="radio4" id="radio15" value="3">
+                    <label class="form-check-label" for="radio15">
+                        shuttlecock
+                    </label>
+                </div>
+                <button type="submit" 
+                    id="submit-button"
+                    class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center hover:bg-red-600">
+                    Submit
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+<script>
+    // console.log("{% url 'main:trigger_ujian_kualifikasi' lulus=1 %}")
+    document.getElementById("form-ujian").addEventListener('submit', function(event) {
+        event.preventDefault();
+        var score = 0;
+        if (document.querySelector('input[name="radio"]:checked').value == 3) {
+            score++;
+        }
+        if (document.querySelector('input[name="radio1"]:checked').value == 2) {
+            score++;
+        }
+        if (document.querySelector('input[name="radio2"]:checked').value == 2) {
+            score++;
+        }
+        if (document.querySelector('input[name="radio3"]:checked').value == 1) {
+            score++;
+        }
+        if (document.querySelector('input[name="radio4"]:checked').value == 3) {
+            score++;
+        }
+
+        var lulus = score >= 4 ? 1:0;
+       
+        fetch(`/ujian-kualifikasi/trigger/${lulus}`)
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .then(() => {
+            window.location.assign("/ujian-kualifikasi/riwayat");
+        })
+    });
+
+    
+</script>
+
+{% endblock content %}
+

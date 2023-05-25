@@ -1,0 +1,60 @@
+{% extends "base.html" %} {% block meta %}
+<title>Badminton | List Ujian Kualifikasi</title>
+{% endblock meta %} {% block content %}
+
+
+<div class="text-center font-bold flex flex-col" id="content">
+
+  <h1 class="my-10 font-bold text-4xl">List Ujian Kualifikasi</h1>
+  <div class="relative overflow-x-auto mx-24">
+    <table class="w-full text-sm text-left ">
+        <thead class="text-xs bg-red-400 text-white">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Tahun
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Batch
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Tempat Pelaksanaan
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Tanggal Pelaksanaan
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+          {% if ujians %}
+            {% for ujian in ujians %}
+            <tr class="bg-red-200 border-b">
+                <td class="px-6 py-4 font-medium">
+                    {{ ujian.tahun }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                    {{ ujian.batch }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                    {{ ujian.tempat }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                    {{ ujian.tanggal }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                  <div class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
+                    <a href="{% url 'main:tes_ujian_kualifikasi' tahun=ujian.tahun batch=ujian.batch tempat=ujian.tempat tanggal=ujian.tanggal %}">Ikuti</a>
+                  </div>
+              </td>
+            </tr>
+            {% endfor %}
+          {% endif %}
+        </tbody>
+    </table>
+  </div>
+</div>
+
+
+{% endblock content %}

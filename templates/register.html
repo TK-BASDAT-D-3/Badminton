@@ -11,11 +11,11 @@
     <div class="grid grid-cols-1 gap-5 bg-red-200 rounded border-4 border-neutral-500 p-5 m-auto">
       <h2 class="text-center font-bold text-lg mb-5"> Choose your role: </h2>
       <div class="flex flex-col justify-center">
-        <a href="#" class="btn bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center"
+        <a href="{% url 'main:show_register_atlet' %}" class="btn bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center"
           style="margin-top: 5px;">ATLET</a>
-        <a href="#" class="btn bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center"
+        <a href="{% url 'main:show_register_pelatih' %}" class="btn bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center"
           style="margin-top: 5px;">PELATIH</a>
-        <a href="#" class="btn bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center"
+        <a href="{% url 'main:show_register_umpire' %}" class="btn bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center"
           style="margin-top: 5px;">UMPIRE</a>
       </div>
     </div>

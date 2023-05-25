@@ -1,0 +1,64 @@
+{% extends "base.html" %} {% block meta %}
+<title>Badminton | Riwayat Ujian Kualifikasi</title>
+{% endblock meta %} {% block content %}
+
+
+<div class="text-center font-bold flex flex-col" id="content">
+
+  <h1 class="my-10 font-bold text-4xl">Riwayat Ujian Kualifikasi</h1>
+  <div class="relative overflow-x-auto mx-24">
+    <table class="w-full text-sm text-left ">
+        <thead class="text-xs bg-red-400 text-white">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Nama
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Tahun
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Batch
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Tempat Pelaksanaan
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Tanggal Pelaksanaan
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Hasil
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+          {% if riwayats %}
+            {% for riwayat in riwayats %}
+            <tr class="bg-red-200 border-b">
+                <td class="px-6 py-4 font-medium">
+                    {{ riwayat.nama }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                    {{ riwayat.tahun }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                    {{ riwayat.batch }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                    {{ riwayat.tempat }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                    {{ riwayat.tanggal }}
+                </td>
+                <td class="px-6 py-4 font-medium">
+                    Tidak Lulus
+                </td>
+            </tr>
+            {% endfor %}
+          {% endif %}
+        </tbody>
+    </table>
+  </div>
+</div>
+
+
+{% endblock content %}

@@ -1,4 +1,8 @@
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
+from .repository import *
 
 
 def show_landing(request):
@@ -37,9 +41,27 @@ def show_dashboard_umpire(request):
     return render(request, "dashboard_umpire.html")
 
 
-def tes_kualifikasi_atlet(request):
-    return render(request, "tes_kualifikasi_atlet.html")
+def buat_ujian_kualifikasi(request):
+    return render(request, "buat_ujian_kualifikasi.html")
 
+def list_ujian_kualifikasi(request):
+    context = get_list_ujian_kualifikasi()
+    return render(request, "list_ujian_kualifikasi.html", context)
 
-def isi_tes_kualifikasi_atlet(request):
-    return render(request, "isi_tes_kualifikasi_atlet.html")
+def riwayat_ujian_kualifikasi(request):
+    context = get_all_riwayat_ujian_kualifikasi()
+    return render(request, "riwayat_ujian_kualifikasi.html",context)
+
+@csrf_exempt
+def tes_ujian_kualifikasi(request, tahun, batch, tempat, tanggal):
+    return render(request, "tes_ujian_kualifikasi.html")
+
+def add_ujian_kualifikasi(request, tahun, batch, tempat, tanggal):
+    insert_ujian_kualifikasi(tahun, batch, tempat, tanggal)
+    return render(request, "list_ujian_kualifikasi.html")
+
+def trigger_ujian_kualifikasi(request, lulus):
+    if lulus:
+        return JsonResponse({"status": "lulus"}, status=200)
+    else:
+        return JsonResponse({"status": "ga lulus"}, status=200)

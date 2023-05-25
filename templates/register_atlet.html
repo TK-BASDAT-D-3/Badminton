@@ -7,7 +7,8 @@
 {% block content %}
 <div class="container">
   <h1 class="text-center my-10 font-bold text-4xl">Form Registrasi Atlet</h1>
-  <form action="" method="post" class="grid grid-cols-1 gap-5 bg-red-200 rounded border-4 border-neutral-500 p-5 m-auto">
+  <form action="" id="form-atlet" method="post" class="grid grid-cols-1 gap-5 bg-red-200 rounded border-4 border-neutral-500 p-5 m-auto">
+    {% csrf_token %}
     <div class="mb-5">
       <label for="nama" class="block mb-2 font-bold">Nama:</label>
       <input type="text" id="nama" name="nama" required class="w-full p-2 border-2 border-neutral-500 rounded-lg">
@@ -32,11 +33,11 @@
       <label class="block mb-2 font-bold">Play:</label>
       <div class="flex items-center">
         <label for="left" class="mr-2">
-          <input type="radio" id="left" name="play" value="left" required>
+          <input type="radio" id="left" name="play" value="f" required>
           Left
         </label>
         <label for="right">
-          <input type="radio" id="right" name="play" value="right">
+          <input type="radio" id="right" name="play" value="t">
           Right
         </label>
       </div>
@@ -51,12 +52,31 @@
       <label for="jenis_kelamin" class="block mb-2 font-bold">Jenis Kelamin:</label>
       <select id="jenis_kelamin" name="jenis_kelamin" required class="w-full p-2 border-2 border-neutral-500 rounded-lg">
         <option value="">Pilih jenis kelamin</option>
-        <option value="Laki-laki">Laki-laki</option>
-        <option value="Perempuan">Perempuan</option>
+        <option value="t">Laki-laki</option>
+        <option value="f">Perempuan</option>
       </select>
     </div>
 
     <input type="submit" value="Daftar" class="bg-red-400 text-white rounded-lg pl-3 md:pl-2 p-2 text-center">
   </form>
 </div>
+<script>
+  document.getElementById('form-atlet').addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    var nama = document.getElementById('nama').value;
+    var email = document.getElementById('email').value;
+    var negara = document.getElementById('negara').value;
+    var tanggal_lahir = document.getElementById('tanggal_lahir').value;
+    var play = document.querySelector('input[name="play"]:checked').value;
+    var tinggi_badan = document.getElementById('tinggi_badan').value;
+    var jenis_kelamin = document.getElementById('jenis_kelamin').value;
+
+    console.log(nama, email, negara, tanggal_lahir, play, tinggi_badan, jenis_kelamin);
+
+    window.location.assign(`/register/atlet/${nama}/${email}/${negara}/${tanggal_lahir}/${play}/${tinggi_badan}/${jenis_kelamin}`);
+  })
+
+
+</script>
 {% endblock content %}

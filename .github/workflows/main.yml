@@ -20,10 +20,10 @@ jobs:
 
     - name: Build and publish Docker image
       run: |
-        docker build -t my-docker-image .
-        docker tag my-docker-image your-docker-username/my-docker-image:latest
-        docker login -u your-docker-username -p ${{ secrets.DOCKER_PASSWORD }}
-        docker push your-docker-username/my-docker-image:latest
+        docker build -t badudu-image .
+        docker tag badudu-image haggy24/badudu-image:latest
+        echo ${{ secrets.DOCKER_PASSWORD }}| docker login -u haggy24 --password-stdin 
+        docker push haggy24/badudu-image:latest
 
     - name: Connect via SSH and execute Docker image
       uses: appleboy/ssh-action@master
@@ -33,9 +33,9 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << EOF
-            docker stop my-docker-container || true
-            docker rm my-docker-container || true
-            docker rmi your-docker-username/my-docker-image:latest || true
-            docker pull your-docker-username/my-docker-image:latest
-            docker run -d --name my-docker-container -p 8000:8000 your-docker-username/my-docker-image:latest
+            docker stop badudu-container || true
+            docker rm badudu-container || true
+            docker rmi haggy24/badudu-image:latest || true
+            docker pull haggy24/badudu-image:latest
+            docker run -d --name badudu-container -p 80:8000 haggy24/badudu-image:latest
           EOF

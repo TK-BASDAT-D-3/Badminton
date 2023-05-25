@@ -1,14 +1,45 @@
 import uuid
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from .db_functions import get_all_atlet_data, get_enrolled_event, unenrolled_event, get_all_atlet_sponsor_data, get_all_sponsor_data, get_all_partai_peserta_kompetisi
 from django.db import connection
 from django.views.decorators.csrf import csrf_exempt
-
 
 from utils.query import query
 
 def show_atlet(request):
-    return redirect("atlet_index")
+    data = get_all_atlet_data()
+    context = {'atlets': data}
+    return render(request, 'atlet_index.html', context)
+
+def un_enrolled_event():
+    unenrolled_event()
+    # return redirect("enrolled_event_atlet.html")
+
+def show_enrolled_event(request):
+    # tarik data event yg didaftar sama atlet yang sedang login
+    data = get_enrolled_event()
+    print("enrolled")
+    print(data)
+    context = {'events': data}
+    return render(request, 'enrolled_event_atlet.html', context)
+
+def get_atlet_sponsor_data(request):
+    name_datas = []
+    data_atlet = get_all_atlet_sponsor_data()
+    data_sponsor = get_all_sponsor_data()
+
+    for i in range(len(data_atlet)):
+        for j in range(len(data_sponsor)):
+            if data_atlet[i][1] == data_sponsor[j][0]:
+                name_datas.append(data_sponsor[j][1])
+    context = {'atlet_sponsors': data_atlet, "sponsors": name_datas}
+    return render(request, 'daftar_sponsor_atlet.html', context)
+
+def show_all_partai_peserta_kompetisi(request):
+    data = get_all_partai_peserta_kompetisi()
+    context = {'partai': data}
+    return render(request, 'partai_peserta_kompetisi.html', context)
 
 def show_daftar_event(request):
     # tarik stadium
@@ -95,41 +126,7 @@ def show_pilih_kategori(request, stadium, event):
     }
     return render(request, 'pilih_kategori.html', context)
 
-def show_enrolled_event(request):
-    # tarik data event yg didaftar sama atlet yang sedang login
-    context = {"enrolled_events": [
-        {
-            "nama_event": "China Open",
-            "superseries": "S1000",
-            "spesialisasi": "Tunggal Putri",
-            "tanggal_mulai": "09/02/2020",
-            "tanggal_selesai": "27/02/2020",
-            "hadiah": 3100,
-            "stadium": "State Arena",
-            "kapasitas": 39660
-        },
-        {
-            "nama_event": "All England Open",
-            "superseries": "S1000",
-            "spesialisasi": "Tunggal Putri",
-            "tanggal_mulai": "03/05/2021",
-            "tanggal_selesai": "22/08/2021",
-            "hadiah": 3100,
-            "stadium": "State Arena",
-            "kapasitas": 39660
-        },
-        {
-            "nama_event": "Denmark Open",
-            "superseries": "S100",
-            "spesialisasi": "Ganda Putri",
-            "tanggal_mulai": "15/03/2023",
-            "tanggal_selesai": "28/07/2023",
-            "hadiah": 310,
-            "stadium": "Private Palace",
-            "kapasitas": 50386
-        },
-    ]}
-    return render(request, 'enrolled_event.html', context)
+
 
 @csrf_exempt
 def create_atlet_ganda(request):

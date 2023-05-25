@@ -311,3 +311,22 @@ def get_peserta_kalah_data_from_match_id(babak, tanggal, waktu_mulai):
     return {
         "peserta_kompetisi": peserta_kompetisi,
     }
+
+from django.db import connection
+
+def get_member_by_email_and_nama(email, nama):
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            select member.id, 'atlet' from badudu.member join badudu.atlet ON atlet.id = member.id 
+            where member.nama=%s and member.email=%s
+            union
+            select member.id, 'pelatih' from badudu.member join badudu.pelatih ON pelatih.id = member.id
+            where member.nama=%s and member.email=%s
+            union
+            select member.id, 'umpire' from badudu.member join badudu.umpire ON umpire.id = member.id
+            where member.nama=%s and member.email=%s
+            
+        """,
+        [nama, email, nama, email, nama, email])
+        row = cursor.fetchone()
+        return row

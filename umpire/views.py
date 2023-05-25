@@ -215,3 +215,19 @@ def insert_peserta_mengikuti_match_view(request):
     
 
 
+from .db_functions import get_member_by_email_and_nama
+@csrf_exempt
+def login(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        nama = request.POST['nama']
+        member = get_member_by_email_and_nama(email, nama)
+        if member:
+            request.session['member_id'] = str(member[0])
+            request.session['member_role'] = member[1]
+            return JsonResponse({"status": "success"}, status=200)
+
+        else:
+            return JsonResponse({"status": "fail"}, status=400)
+        
+    return render(request, 'login.html')

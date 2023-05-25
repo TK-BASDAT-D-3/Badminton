@@ -26,7 +26,7 @@ def get_all_riwayat_ujian_kualifikasi():
             select nama, tahun, batch, tempat, tanggal, hasil_lulus
             from atlet_nonkualifikasi_ujian_kualifikasi u 
             join member m on u.id_atlet = m.id
-
+            where hasil_lulus='f'
         """)
         ujian_kompetisi = cursor.fetchall()
         for row in ujian_kompetisi:
